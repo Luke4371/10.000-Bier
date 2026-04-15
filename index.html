@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Namen Klick-Counter</title>
+    <title>10.000 Bier Counter</title>
     <style>
         * {
             margin: 0;
@@ -132,10 +132,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>🎯 Namen Klick-Counter</h1>
+        <h1> Bier Kick Counter</h1>
         
         <div class="counter-display">
-            Gesamtklicks: <span id="total-counter">0</span>
+            Gesamt Bier: <span id="total-counter">0</span>
         </div>
         
         <div class="names-list" id="names-container">
@@ -143,7 +143,7 @@
         </div>
         
         <div class="sorted-list" id="sorted-container" style="display: none;">
-            <h3>📊 Sortiert nach Klicks</h3>
+            <h3>📊 Sortiert nach dem Grössten Säufer</h3>
             <div id="sorted-list-content">
                 <!-- Sortierte Namen hier -->
             </div>
@@ -181,7 +181,7 @@
                 
                 const btn = document.createElement('button');
                 btn.className = 'click-btn';
-                btn.textContent = 'Klick mich!';
+                btn.textContent = 'Getrunken +1';
                 btn.onclick = () => handleClick(index);
                 
                 item.appendChild(nameSpan);
@@ -229,7 +229,7 @@
                 nameText.textContent = person.name;
                 
                 const clickCount = document.createElement('span');
-                clickCount.textContent = `${person.clicks} Klick${person.clicks === 1 ? '' : 's'}`;
+                clickCount.textContent = `${person.clicks} Biere${person.clicks === 1 ? '' : ''}`;
                 
                 item.appendChild(rank);
                 item.appendChild(nameText);
