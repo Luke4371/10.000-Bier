@@ -1,590 +1,245 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <title>Building Connections – Cork LCYP Strategic Plan 2024–28</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root {
-      --primary: #0b5c7a;
-      --accent: #f4b000;
-      --bg: #f7f7fa;
-      --text: #222;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-    }
-
-    header {
-      background: linear-gradient(135deg, var(--primary), #143b52);
-      color: #fff;
-      padding: 3rem 1.5rem;
-      text-align: center;
-    }
-
-    header h1 {
-      margin: 0 0 0.5rem;
-      font-size: 2.4rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    header h2 {
-      margin: 0;
-      font-weight: 400;
-      font-size: 1.1rem;
-      opacity: 0.9;
-    }
-
-    header p {
-      max-width: 800px;
-      margin: 1.5rem auto 0;
-      font-size: 0.98rem;
-    }
-
-    nav {
-      background: #fff;
-      border-bottom: 1px solid #ddd;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    nav .nav-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-    }
-
-    nav button {
-      border: none;
-      background: transparent;
-      color: var(--primary);
-      padding: 0.4rem 0.8rem;
-      border-radius: 999px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: background 0.2s, color 0.2s;
-    }
-
-    nav button:hover {
-      background: var(--primary);
-      color: #fff;
-    }
-
-    main {
-      max-width: 1100px;
-      margin: 2rem auto;
-      padding: 0 1rem 3rem;
-    }
-
-    section {
-      margin-bottom: 2.5rem;
-      background: #fff;
-      border-radius: 10px;
-      padding: 1.5rem 1.5rem 1.2rem;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
-    }
-
-    section h2 {
-      margin-top: 0;
-      color: var(--primary);
-      font-size: 1.4rem;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    section h3 {
-      margin-top: 1.2rem;
-      font-size: 1.05rem;
-      color: #333;
-    }
-
-    .tagline {
-      font-style: italic;
-      color: #eee;
-      margin-top: 1rem;
-    }
-
-    .quote {
-      border-left: 4px solid var(--accent);
-      padding-left: 0.9rem;
-      margin: 1rem 0;
-      font-style: italic;
-      color: #444;
-      background: rgba(255,255,255,0.08);
-    }
-
-    .pill {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.15);
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    ul {
-      padding-left: 1.2rem;
-    }
-
-    .objectives-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1rem;
-    }
-
-    .card {
-      border-radius: 10px;
-      border: 1px solid #e0e0e0;
-      padding: 1rem 1rem 0.6rem;
-      background: #fafafa;
-    }
-
-    .card h3 {
-      margin-top: 0;
-      font-size: 1rem;
-      color: var(--primary);
-    }
-
-    .collapsible {
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      margin-top: 0.8rem;
-      overflow: hidden;
-    }
-
-    .collapsible-header {
-      background: #f1f1f6;
-      padding: 0.6rem 0.8rem;
-      cursor: pointer;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.95rem;
-    }
-
-    .collapsible-header span {
-      font-weight: 600;
-    }
-
-    .collapsible-body {
-      padding: 0.7rem 0.9rem 0.9rem;
-      display: none;
-      background: #fff;
-    }
-
-    .collapsible.open .collapsible-body {
-      display: block;
-    }
-
-    .collapsible-header .chevron {
-      font-size: 0.9rem;
-      transition: transform 0.2s;
-    }
-
-    .collapsible.open .chevron {
-      transform: rotate(90deg);
-    }
-
-    .links-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    .links-table th,
-    .links-table td {
-      border: 1px solid #ddd;
-      padding: 0.5rem;
-    }
-
-    .links-table th {
-      background: #f1f1f6;
-      text-align: left;
-    }
-
-    footer {
-      text-align: center;
-      padding: 1.5rem 1rem 2rem;
-      font-size: 0.85rem;
-      color: #666;
-    }
-
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 1.8rem;
-      }
-      header h2 {
-        font-size: 0.95rem;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Namen Klick-Counter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        
+        .names-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .name-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .name-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .name-text {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #444;
+            min-width: 150px;
+        }
+        
+        .click-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+                       border-radius: 50px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .click-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        .click-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .counter-display {
+            text-align: center;
+            font-size: 1.5em;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .sorted-list {
+            background: rgba(255,255,255,0.8);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .sorted-list h3 {
+            color: #333;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .sorted-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .sorted-item:last-child {
+            border-bottom: none;
+        }
+        
+        .rank {
+            font-weight: bold;
+            color: #667eea;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <div class="pill">Cork Local Creative Youth Partnership</div>
-    <h1>Building Connections</h1>
-    <h2>Strategic Plan 2024–2028</h2>
-    <p class="tagline">
-      “What is creativity? It is a reaction. It's a conversation. It's a dance ... It's beautiful to see.”
-      – Amelie Prone, Young Critic at the Crawford Art Gallery for Youth Theatre Ireland
-    </p>
-    <p>
-      Cork ETB’s Local Creative Youth Partnership (LCYP) is a youth-led network that expands creative
-      opportunities for children and young people aged 0–24 across Cork city and county.
-    </p>
-  </header>
-
-  <nav>
-    <div class="nav-inner">
-      <button data-target="transformational-power">Transformational Power</button>
-      <button data-target="finding-our-voice">Finding Our Voice</button>
-      <button data-target="background-context">Background & Context</button>
-      <button data-target="creative-youth">Creative Youth</button>
-      <button data-target="cork-etb">Cork ETB</button>
-      <button data-target="consultations">Consultations</button>
-      <button data-target="mission-values">Mission & Priorities</button>
-      <button data-target="objectives-actions">Objectives & Actions</button>
-      <button data-target="links">Links</button>
+    <div class="container">
+        <h1>🎯 Namen Klick-Counter</h1>
+        
+        <div class="counter-display">
+            Gesamtklicks: <span id="total-counter">0</span>
+        </div>
+        
+        <div class="names-list" id="names-container">
+            <!-- Namen werden hier eingefügt -->
+        </div>
+        
+        <div class="sorted-list" id="sorted-container" style="display: none;">
+            <h3>📊 Sortiert nach Klicks</h3>
+            <div id="sorted-list-content">
+                <!-- Sortierte Namen hier -->
+            </div>
+        </div>
     </div>
-  </nav>
 
-  <main>
-    <section id="transformational-power">
-      <h2>Transformational Power of Creativity</h2>
-      <p>
-        Welcome to the first Strategic Plan for Cork ETB's Local Creative Youth Partnership (LCYP).
-        Established in April 2022, the Cork LCYP is, at its core, a network to enable information sharing
-        and collaboration between the ETB, local authorities, the non-formal education sector, family
-        support services and youth services.
-      </p>
-      <p>
-        Directly funded by government and led by the voices of young people, the LCYP aims to explore
-        and develop pathways to ensure that all children and young people can flourish creatively,
-        delivering opportunities for experimentation, play and creative engagement.
-      </p>
-      <p>
-        Creativity is described as fluid, intangible, delightful and innovative, supporting the social,
-        personal and creative development of young people and enabling relationship-building,
-        collaboration and the exchange of ideas.
-      </p>
-      <p>
-        The aims of the partnership are to give every child and young person (0–24 years) in Cork city
-        and county practical access to out-of-school tuition, experience and participation in creativity.
-        Young people's participation in decision-making is central to the development, implementation
-        and evaluation of plans and activities of the LCYP.
-      </p>
-    </section>
-
-    <section id="finding-our-voice">
-      <h2>Finding Our Voice</h2>
-      <p>
-        Cork ETB Local Creative Youth Partnership has created a pilot youth-led forum called the
-        <strong>Rebel Youth Creatives (RYC)</strong> to consult on creative matters. Through monthly meetings,
-        young people have participated in creating a youth-informed strategic plan in a warm, welcoming
-        environment that builds confidence and self-esteem.
-      </p>
-      <p>
-        One member describes the impact: “As someone who comes from an area of rural isolation, this
-        opportunity has been life-changing for me as I have made incredible friends and connections.”
-      </p>
-      <p>
-        The LCYP ensures all voices are heard, especially those of young people who are seldom heard.
-        Diversity and inclusion are at the core of the Partnership and the Rebel Youth Creatives group,
-        implementing Article 12 of the UN Convention on the Rights of the Child using the Lundy Model.
-      </p>
-      <div class="quote">
-        “As a young person, being a Rebel Youth Creative has been incredibly exciting and invaluable to my
-        career as an emerging artist and of course as a young person. I have such a clear understanding of
-        my rights: I have found my voice.” – Katie O’Rourke, Rebel Youth Creative
-      </div>
-    </section>
-
-    <section id="background-context">
-      <h2>Background and Context</h2>
-      <p>
-        The <strong>Creative Youth Plan</strong>, published in December 2017, aims to give every child practical
-        access to tuition, experience and participation in creativity and to ensure that children and young
-        people retain a key voice in decision-making, prioritising those most at risk of disadvantage.
-      </p>
-      <p>
-        Creativity is described as “the use of imaginative capabilities to transform thinking and produce
-        original and innovative ideas and solutions.”
-      </p>
-    </section>
-
-    <section id="creative-youth">
-      <h2>Creative Youth & Creative Ireland Programme</h2>
-      <p>
-        The <strong>Creative Ireland Programme</strong> is an all-of-government, culture-based initiative that
-        emphasises the importance of human creativity for individual, community and national wellbeing.
-        It is grounded in the belief that every person has creative capacities, the development of which
-        contributes to personal and collective wellbeing.
-      </p>
-      <p>
-        The long-term objective is that wellbeing is enhanced through increased participation in creative
-        activity at all stages of life. Key partners in delivering Creative Youth include the Department of
-        Education (DoE), the Department of Children, Equality, Disability, Integration and Youth (DCEDIY),
-        and the Department of Tourism, Culture, Arts, Gaeltacht, Sport and Media (DTCAGSM).
-      </p>
-      <p>
-        The Creative Youth Plan intends to enable and propagate the creative potential of every child and
-        young person aged 0–24 through expanded and new initiatives, creating a place where knowledge
-        and creativity are equal partners in forming creative, active citizens.
-      </p>
-    </section>
-
-    <section id="cork-etb">
-      <h2>Cork ETB – Uniquely Placed to Deliver LCYP</h2>
-      <p>
-        Cork ETB is the ideal host platform to deliver the Local Creative Youth Partnership as it is uniquely
-        placed to engage young people who may be seldom-heard or hard-to-reach. It promotes a culture
-        of growth and development in which children and young people are encouraged to give full
-        expression to their talents and gifts.
-      </p>
-      <p>
-        Cork ETB has a strong school network including national schools, post-primary schools and colleges,
-        as well as 12 Youthreach centres across the region. Its Arts Education Strategy underpins a
-        commitment to building a creative and culturally-aware organisation.
-      </p>
-      <p>
-        Cork ETB also coordinates 30 staffed youth work projects and services and over 170 volunteer-led
-        clubs. An evaluation of the initial pilot LCYPs identified the success of positioning LCYP within the
-        youth work sections of ETBs.
-      </p>
-    </section>
-
-    <section id="consultations">
-      <h2>Consultations on the LCYP Plan</h2>
-      <p>
-        The Strategic Plan is founded on extensive consultations, conversations and evaluations of Cork’s
-        2022–2023 pilot LCYP. It is aligned with Cork ETB’s Strategic Plan, Arts Education Strategy, Youth
-        Services Strategic Plan, European Youth Goals, the Arts Council’s Equality, Human Rights and
-        Diversity policy, and local authority Arts & Culture strategies.
-      </p>
-      <p>
-        The LCYP is situated within Cork ETB Youth Services and supported by <strong>Hub na nÓg</strong>, fitting with
-        the government’s <em>Young Ireland</em> National Policy Framework for Children and Young People
-        2023–2028.
-      </p>
-      <p>
-        Consultations with hundreds of children and young people across Cork identified key areas of need:
-      </p>
-      <ul>
-        <li>Space</li>
-        <li>Awareness</li>
-        <li>Creative collaboration</li>
-        <li>Skills development</li>
-        <li>Diversity and inclusion</li>
-        <li>Access</li>
-        <li>Rights-based approach</li>
-      </ul>
-      <p>
-        Young people expressed strong interest in ongoing engagement, with 80 young people interested in
-        joining an LCYP youth forum to inform the work.
-      </p>
-    </section>
-
-    <section id="mission-values">
-      <h2>Mission Statement & Priorities</h2>
-      <h3>Mission Statement</h3>
-      <p>
-        Cork LCYP develops local networks with a wide range of organisations to expand and provide
-        inclusive, diverse and responsive creative opportunities for all children and young people aged
-        0–24 in out-of-school settings, with a particular focus on those who are marginalised or who
-        experience disadvantage in the Cork ETB functional area.
-      </p>
-
-      <h3>Core Values and Guiding Principles – Priorities</h3>
-      <ul>
-        <li>
-          Engage children and young people aged 0–24, with a special focus on those aged 10+.
-        </li>
-        <li>
-          Engage children and young people in Cork city and county, with a special focus on seldom-heard voices.
-        </li>
-        <li>
-          Build a sustainable network of organisations and practitioners to provide practical, participatory creative opportunities.
-        </li>
-        <li>
-          Build capacity on personal, social and organisational levels to enhance the aims of Cork LCYP.
-        </li>
-        <li>
-          Ensure that the voice of the child is front and foremost in creative project planning, taking their views seriously and working collaboratively.
-        </li>
-      </ul>
-    </section>
-
-    <section id="objectives-actions">
-      <h2>From Paper to Practice – Objectives & Actions</h2>
-
-      <div class="objectives-grid">
-        <div class="card">
-          <h3>Objective 1: Be Youth-Led</h3>
-          <div class="collapsible">
-            <div class="collapsible-header">
-              <span>Show actions</span>
-              <span class="chevron">▶</span>
-            </div>
-            <div class="collapsible-body">
-              <ul>
-                <li>Deliver training on the Lundy “Everyday Spaces” checklist.</li>
-                <li>Develop the dedicated youth forum, the Rebel Youth Creatives.</li>
-                <li>Establish diverse focus groups for ongoing youth consultation.</li>
-                <li>Support creative workshops in response to needs identified by young people.</li>
-                <li>Trial innovative approaches for seldom-heard young people to access creative opportunities.</li>
-                <li>Ensure access to open, welcoming spaces that celebrate the arts and diversity.</li>
-                <li>Support young people to be creative leaders and progress to further learning and creative careers.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Objective 2: Develop the Partnership</h3>
-          <div class="collapsible">
-            <div class="collapsible-header">
-              <span>Show actions</span>
-              <span class="chevron">▶</span>
-            </div>
-            <div class="collapsible-body">
-              <ul>
-                <li>Connect venues and artists with youth organisations.</li>
-                <li>Build awareness through public showcases and events.</li>
-                <li>Develop a social media presence supported by young people.</li>
-                <li>Create actions in areas of rural isolation, with a focus on West Cork.</li>
-                <li>Build on relationships with Cork ETB FET, Youthreach and Youth Services to develop progression routes.</li>
-                <li>Identify local partners and bridge gaps in provision.</li>
-                <li>Offer training and CPD opportunities for personal, social and artistic growth in Youth Arts.</li>
-                <li>Ensure a collaborative approach that avoids duplication and responds to young people’s voices.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Objective 3: Foster Inclusion</h3>
-          <div class="collapsible">
-            <div class="collapsible-header">
-              <span>Show actions</span>
-              <span class="chevron">▶</span>
-            </div>
-            <div class="collapsible-body">
-              <ul>
-                <li>Share best practice.</li>
-                <li>Measure the impact of creative youth work.</li>
-                <li>Ensure diverse programming reflecting different cultural contexts and participants’ experiences.</li>
-                <li>Create awareness of opportunities.</li>
-                <li>Support emerging young artists to access arts facilitation training and employment.</li>
-                <li>Provide inclusive role models.</li>
-                <li>Recognise the value of universal provision for integrating diverse young people.</li>
-                <li>Target young people with seldom-heard voices.</li>
-                <li>Embed social inclusion into initiatives.</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3>Objective 4: Deepen Creative Collaborations</h3>
-          <div class="collapsible">
-            <div class="collapsible-header">
-              <span>Show actions</span>
-              <span class="chevron">▶</span>
-            </div>
-            <div class="collapsible-body">
-              <ul>
-                <li>Support groups to engage with creative themes identified by young people:
-                  Climate &amp; Creativity, Music &amp; Migration, Youth Media.</li>
-                <li>Support Erasmus+ applications to increase breadth and scope of engagement.</li>
-                <li>Build Cork ETB Youth Services’ international engagement with Erasmus+.</li>
-                <li>Support creatives to engage with multi-agencies on programme development.</li>
-                <li>Create new initiatives and develop existing provision.</li>
-                <li>
-                  Support creative actions in the Irish language, recognising the importance of digital and creative skills
-                  for young people as they celebrate their achievements through inspiring workshops.
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="links">
-      <h2>Links & Partners</h2>
-      <p>Further information and partner organisations connected to the Cork LCYP:</p>
-      <table class="links-table">
-        <tr>
-          <th>Website</th>
-          <th>Notes</th>
-        </tr>
-        <tr>
-          <td>www.creativeireland.gov.ie/en/creative-youth/creative-youth-partnerships</td>
-          <td>Creative Youth Partnerships – Creative Ireland Programme</td>
-        </tr>
-        <tr>
-          <td>www.corketb.ie/cork-etb-arts-provision</td>
-          <td>Cork ETB Arts Provision</td>
-        </tr>
-        <tr>
-          <td>hubnanog.ie</td>
-          <td>Hub na nÓg – Young voices in decision-making</td>
-        </tr>
-        <tr>
-          <td>rebelyouth_lcyp</td>
-          <td>Rebel Youth Creatives (social media handle)</td>
-        </tr>
-      </table>
-      <p style="margin-top:1rem;">
-        Additional partners include the Government of Ireland, the Creative Ireland Programme, Hub na nÓg,
-        and Cork Education and Training Board Youthwork Services.
-      </p>
-    </section>
-  </main>
-
-  <footer>
-    Cork Local Creative Youth Partnership · Cork Education and Training Board · Registered Charity Number: 20083274
-  </footer>
-
-  <script>
-    // Smooth scroll navigation
-    document.querySelectorAll("nav button[data-target]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var id = btn.getAttribute("data-target");
-        var section = document.getElementById(id);
-        if (section) {
-          window.scrollTo({
-            top: section.offsetTop - 70,
-            behavior: "smooth"
-          });
+    <script>
+        // Die 10 Namen
+        const names = [
+            { name: "Luke", clicks: 0 },
+            { name: "Gereon", clicks: 0 },
+            { name: "Julius", clicks: 0 },
+            { name: "Hannes", clicks: 0 },
+            { name: "Enrico", clicks: 0 },
+            { name: "Max", clicks: 0 },
+            { name: "Elias", clicks: 0 },
+            { name: "Magnus", clicks: 0 },
+            { name: "Basti", clicks: 0 },
+            { name: "Florian", clicks: 0 }
+        ];
+        
+        let totalClicks = 0;
+        
+        // Initialisierung
+        function init() {
+            const container = document.getElementById('names-container');
+            
+            names.forEach((person, index) => {
+                const item = document.createElement('div');
+                item.className = 'name-item';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'name-text';
+                nameSpan.textContent = person.name;
+                
+                const btn = document.createElement('button');
+                btn.className = 'click-btn';
+                btn.textContent = 'Klick mich!';
+                btn.onclick = () => handleClick(index);
+                
+                item.appendChild(nameSpan);
+                item.appendChild(btn);
+                container.appendChild(item);
+            });
         }
-      });
-    });
-
-    // Collapsible objective cards
-    document.querySelectorAll(".collapsible").forEach(function (col) {
-      var header = col.querySelector(".collapsible-header");
-      header.addEventListener("click", function () {
-        col.classList.toggle("open");
-      });
-    });
-  </script>
+        
+        // Klick-Handler
+        function handleClick(index) {
+            // Counter erhöhen
+            totalClicks++;
+            document.getElementById('total-counter').textContent = totalClicks;
+            
+            // Einzelnen Counter erhöhen
+            names[index].clicks++;
+            
+            // Liste aktualisieren
+            updateSortedList();
+        }
+        
+        // Sortierte Liste aktualisieren
+        function updateSortedList() {
+            const sortedContainer = document.getElementById('sorted-container');
+            const listContent = document.getElementById('sorted-list-content');
+            
+            // Sortieren nach Klicks (absteigend)
+            const sortedNames = [...names].sort((a, b) => b.clicks - a.clicks);
+            
+            // Container anzeigen
+            sortedContainer.style.display = 'block';
+            
+            // Liste leeren und neu befüllen
+            listContent.innerHTML = '';
+            
+            sortedNames.forEach((person, index) => {
+                const item = document.createElement('div');
+                item.className = 'sorted-item';
+                
+                const rank = document.createElement('span');
+                rank.className = 'rank';
+                rank.textContent = `#${index + 1}`;
+                
+                const nameText = document.createElement('span');
+                nameText.textContent = person.name;
+                
+                const clickCount = document.createElement('span');
+                clickCount.textContent = `${person.clicks} Klick${person.clicks === 1 ? '' : 's'}`;
+                
+                item.appendChild(rank);
+                item.appendChild(nameText);
+                item.appendChild(clickCount);
+                listContent.appendChild(item);
+            });
+        }
+        
+        // Start
+        init();
+    </script>
 </body>
 </html>
