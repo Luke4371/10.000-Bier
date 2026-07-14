@@ -3,957 +3,1998 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PRIMECORE - Text Adventure</title>
+    <title>⚡ PRIMECORE v2.0 ⚡</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-       
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --neon-green: #00ff41;
+            --neon-red: #ff0040;
+            --neon-blue: #00d4ff;
+            --neon-yellow: #ffea00;
+            --neon-purple: #b829dd;
+            --dark-bg: #0a0a0f;
+            --panel-bg: #111118;
         }
-       
+
         body {
-            background: #0a0a0a;
-            color: #00ff00;
+            background: var(--dark-bg);
+            color: var(--neon-green);
             font-family: 'Share Tech Mono', monospace;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
         }
-       
+
         body::before {
             content: " ";
             display: block;
             position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
+            top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
                         linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
             background-size: 100% 2px, 3px 100%;
             pointer-events: none;
             z-index: 1000;
         }
-       
+
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: rgba(0, 255, 65, 0.015);
+            pointer-events: none;
+            z-index: 999;
+            animation: screenFlicker 5s infinite;
+        }
+
+        @keyframes screenFlicker {
+            0%, 100% { opacity: 0; }
+            92% { opacity: 0; }
+            93% { opacity: 0.4; }
+            94% { opacity: 0; }
+            96% { opacity: 0.15; }
+            97% { opacity: 0; }
+        }
+
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+            10% { transform: translateX(-8px) rotate(-1deg); }
+            20% { transform: translateX(8px) rotate(1deg); }
+            30% { transform: translateX(-5px); }
+            40% { transform: translateX(5px); }
+            50% { transform: translateX(-3px); }
+            60% { transform: translateX(3px); }
+            70% { transform: translateX(-1px); }
+            80% { transform: translateX(1px); }
         }
-       
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px var(--neon-green), 0 0 10px rgba(0,255,65,0.3); }
+            50% { box-shadow: 0 0 15px var(--neon-green), 0 0 30px rgba(0,255,65,0.5); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes damage-number {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            50% { opacity: 1; transform: translateY(-20px) scale(1.3); }
+            100% { opacity: 0; transform: translateY(-50px) scale(0.8); }
+        }
+
+        @keyframes header-sweep {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            14% { transform: scale(1.08); }
+            28% { transform: scale(1); }
+            42% { transform: scale(1.08); }
+            70% { transform: scale(1); }
+        }
+
+        @keyframes border-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes toast-in {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes toast-out {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(50px); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         header {
-            background: #111;
-            border-bottom: 2px solid #00ff00;
+            background: linear-gradient(180deg, #111118 0%, #0a0a0f 100%);
+            border-bottom: 2px solid var(--neon-green);
             padding: 15px;
             text-align: center;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 30px rgba(0, 255, 65, 0.2);
+            position: relative;
+            overflow: hidden;
         }
-       
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,255,65,0.1), transparent);
+            animation: header-sweep 4s ease-in-out infinite;
+        }
+
         h1 {
-            font-size: 2em;
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2em;
+            font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 5px;
-            text-shadow: 0 0 10px #00ff00;
-            animation: flicker 3s infinite;
+            letter-spacing: 6px;
+            text-shadow: 0 0 10px var(--neon-green), 0 0 20px rgba(0,255,65,0.4);
+            position: relative;
         }
-       
-        @keyframes flicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.95; }
-            52% { opacity: 0.5; }
-            54% { opacity: 0.95; }
+
+        .subtitle {
+            font-size: 0.8em;
+            opacity: 0.7;
+            letter-spacing: 4px;
+            margin-top: 5px;
+            color: var(--neon-blue);
         }
-       
+
         .game-container {
             display: flex;
             flex: 1;
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
             width: 100%;
             padding: 20px;
             gap: 20px;
         }
-       
+
         .sidebar {
             width: 300px;
-            background: #111;
-            border: 1px solid #333;
-            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
         }
-       
-        .status-panel {
-            border: 1px solid #00ff00;
-            padding: 15px;
-            background: #0a0a0a;
-        }
-       
-        .health-bar {
-            width: 100%;
-            height: 20px;
-            background: #330000;
-            border: 1px solid #ff0000;
-            margin-top: 10px;
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid #333;
+            padding: 18px;
             position: relative;
             overflow: hidden;
         }
-       
-        .health-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff0000, #ff6666);
-            transition: width 0.3s;
-            box-shadow: 0 0 10px #ff0000;
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+            opacity: 0.5;
         }
-       
-        .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 5px;
-            margin-top: 10px;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-       
-        .item {
-            background: #222;
-            border: 1px solid #444;
-            padding: 5px;
-            text-align: center;
-            font-size: 0.8em;
-            cursor: help;
-            transition: all 0.2s;
-        }
-       
-        .item:hover {
-            border-color: #00ff00;
-            background: #1a1a1a;
-        }
-       
-        .main-panel {
-            flex: 1;
+
+        .panel-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.85em;
+            letter-spacing: 3px;
+            margin-bottom: 12px;
             display: flex;
-            flex-direction: column;
-            background: #111;
-            border: 1px solid #333;
-        }
-       
-        .game-log {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            max-height: 60vh;
-            border-bottom: 1px solid #333;
-        }
-       
-        .log-entry {
-            margin-bottom: 10px;
-            line-height: 1.6;
-            border-left: 2px solid #00ff00;
-            padding-left: 10px;
-            animation: slideIn 0.3s ease-out;
-        }
-       
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-       
-        .log-entry.combat { border-color: #ff0000; color: #ff6666; }
-        .log-entry.loot { border-color: #ffff00; color: #ffff99; }
-        .log-entry.event { border-color: #00ffff; color: #99ffff; }
-        .log-entry.death { border-color: #ff0000; color: #ff0000; font-weight: bold; }
-        .log-entry.win { border-color: #ffd700; color: #ffd700; font-size: 1.2em; }
-       
-        .action-panel {
-            padding: 20px;
-            background: #0a0a0a;
-        }
-       
-        .button-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin-top: 10px;
-        }
-       
-        button {
-            background: #001100;
-            border: 1px solid #00ff00;
-            color: #00ff00;
-            padding: 12px 20px;
-            font-family: inherit;
-            font-size: 1em;
-            cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-        }
-       
-        button:hover:not(:disabled) {
-            background: #00ff00;
-            color: #000;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
-        }
-       
-        button:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            border-color: #333;
-            color: #333;
-        }
-       
-        button.danger {
-            border-color: #ff0000;
-            color: #ff6666;
-        }
-       
-        button.danger:hover:not(:disabled) {
-            background: #ff0000;
-            color: #000;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
-        }
-       
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 2000;
-            justify-content: center;
             align-items: center;
+            gap: 8px;
+            color: var(--neon-blue);
         }
-       
-        .modal.active {
-            display: flex;
-        }
-       
-        .modal-content {
-            background: #111;
-            border: 2px solid #00ff00;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            box-shadow: 0 0 50px rgba(0, 255, 0, 0.3);
-        }
-       
-        .riddle-input {
-            width: 100%;
-            background: #000;
-            border: 1px solid #00ff00;
-            color: #00ff00;
-            padding: 10px;
-            font-family: inherit;
-            font-size: 1.2em;
-            margin-top: 15px;
-        }
-       
-        .hidden { display: none !important; }
-       
+
         .biome-indicator {
             text-align: center;
-            padding: 10px;
-            background: #222;
-            border: 1px solid #444;
-            margin-bottom: 10px;
-            font-size: 1.2em;
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(0,255,65,0.1), rgba(0,212,255,0.05));
+            border: 1px solid rgba(0,255,65,0.3);
+            margin-bottom: 12px;
+            font-size: 1em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-family: 'Orbitron', monospace;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+
+        .biome-indicator.danger {
+            background: linear-gradient(135deg, rgba(255,0,64,0.1), rgba(184,41,221,0.05));
+            border-color: rgba(255,0,64,0.3);
+            color: var(--neon-red);
+            animation: pulse-glow 1.5s ease-in-out infinite;
+        }
+
+        .biome-indicator.medium {
+            background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,234,0,0.05));
+            border-color: rgba(0,212,255,0.3);
+            color: var(--neon-blue);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .stat-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #333;
+            padding: 8px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-box:hover {
+            border-color: var(--neon-green);
+            background: rgba(0,255,65,0.05);
+        }
+
+        .stat-label {
+            font-size: 0.65em;
+            opacity: 0.6;
+            letter-spacing: 2px;
             text-transform: uppercase;
         }
-       
+
+        .stat-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 3px;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .health-section { margin-bottom: 10px; }
+
+        .health-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75em;
+            margin-bottom: 5px;
+            letter-spacing: 2px;
+        }
+
+        .health-bar-container {
+            width: 100%;
+            height: 22px;
+            background: #1a0000;
+            border: 1px solid var(--neon-red);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .health-bar-container::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(90deg, transparent, transparent 9px, rgba(0,0,0,0.3) 9px, rgba(0,0,0,0.3) 10px);
+            pointer-events: none;
+        }
+
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0040, #ff6b6b, #ff0040);
+            background-size: 200% 100%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 15px rgba(255,0,64,0.5);
+            animation: border-flow 2s linear infinite;
+        }
+
+        .health-fill.low {
+            background: linear-gradient(90deg, #ff0000, #ff3333);
+            animation: heartbeat 1s ease-in-out infinite, border-flow 1s linear infinite;
+        }
+
+        .health-text {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 0.85em;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .xp-section { margin-top: 8px; }
+
+        .xp-bar-container {
+            width: 100%;
+            height: 6px;
+            background: #001100;
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-yellow), var(--neon-green));
+            transition: width 0.5s;
+            box-shadow: 0 0 10px rgba(255,234,0,0.3);
+        }
+
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            padding: 3px;
+        }
+
+        .inventory-grid::-webkit-scrollbar { width: 4px; }
+        .inventory-grid::-webkit-scrollbar-track { background: #111; }
+        .inventory-grid::-webkit-scrollbar-thumb { background: var(--neon-green); }
+
+        .item-slot {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #333;
+            padding: 6px 3px;
+            text-align: center;
+            font-size: 0.7em;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: 55px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            position: relative;
+        }
+
+        .item-slot:hover {
+            border-color: var(--neon-green);
+            background: rgba(0,255,65,0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,255,65,0.15);
+        }
+
+        .item-slot.equipped {
+            border-color: var(--neon-yellow);
+            background: rgba(255,234,0,0.08);
+            box-shadow: 0 0 10px rgba(255,234,0,0.2);
+        }
+
+        .item-slot.weapon { border-color: rgba(255,0,64,0.4); }
+        .item-slot.armor { border-color: rgba(0,212,255,0.4); }
+        .item-slot.consumable { border-color: rgba(0,255,65,0.4); }
+
+        .item-icon { font-size: 1.3em; }
+        .item-name { font-size: 0.7em; line-height: 1.2; }
+        .item-count {
+            position: absolute;
+            bottom: 2px;
+            right: 3px;
+            font-size: 0.65em;
+            color: var(--neon-yellow);
+            font-weight: bold;
+        }
+
         .dungeon-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 8px;
             margin-top: 10px;
         }
-       
+
         .dungeon-node {
             aspect-ratio: 1;
             display: flex;
             align-items: center;
             justify-content: center;
             border: 1px solid #444;
-            background: #1a1a1a;
+            background: rgba(0,0,0,0.3);
             font-size: 0.8em;
+            font-family: 'Orbitron', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dungeon-node:hover:not(.completed) {
+            border-color: var(--neon-green);
+            background: rgba(0,255,65,0.05);
+            transform: scale(1.05);
+        }
+
+        .dungeon-node.completed {
+            background: linear-gradient(135deg, rgba(0,255,65,0.15), rgba(0,255,65,0.05));
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(0,255,65,0.2);
+        }
+
+        .dungeon-node.completed::after {
+            content: '✓';
+            font-size: 1.4em;
+        }
+
+        .dungeon-node .node-label {
+            font-size: 0.65em;
+            position: absolute;
+            bottom: 2px;
+        }
+
+        .main-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--panel-bg);
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon-green), transparent);
+        }
+
+        .game-log {
+            flex: 1;
+            padding: 18px;
+            overflow-y: auto;
+            max-height: 55vh;
+            border-bottom: 1px solid #333;
             position: relative;
         }
-       
-        .dungeon-node.completed {
-            background: #003300;
-            border-color: #00ff00;
+
+        .game-log::-webkit-scrollbar { width: 6px; }
+        .game-log::-webkit-scrollbar-track { background: #0a0a0f; }
+        .game-log::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--neon-green), var(--neon-blue));
+            border-radius: 3px;
         }
-       
-        .dungeon-node.current {
-            box-shadow: 0 0 10px #00ff00;
-            animation: pulse 2s infinite;
+
+        .log-entry {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            border-left: 3px solid var(--neon-green);
+            padding-left: 12px;
+            animation: slideIn 0.3s ease-out;
+            position: relative;
+            font-size: 0.92em;
         }
-       
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+        .log-entry::before {
+            content: '>';
+            position: absolute;
+            left: -3px;
+            color: var(--neon-green);
+            opacity: 0.5;
         }
-       
-        @media (max-width: 768px) {
+
+        .log-entry.combat { border-color: var(--neon-red); color: #ff9999; background: rgba(255,0,64,0.03); }
+        .log-entry.combat::before { color: var(--neon-red); }
+        .log-entry.loot { border-color: var(--neon-yellow); color: #ffffcc; background: rgba(255,234,0,0.03); }
+        .log-entry.loot::before { color: var(--neon-yellow); }
+        .log-entry.event { border-color: var(--neon-blue); color: #99eeff; background: rgba(0,212,255,0.03); }
+        .log-entry.event::before { color: var(--neon-blue); }
+        .log-entry.death { border-color: var(--neon-red); color: #ff4444; font-weight: bold; background: rgba(255,0,64,0.08); animation: slideIn 0.3s ease-out, shake 0.5s; }
+        .log-entry.win { border-color: var(--neon-yellow); color: #ffee88; font-size: 1.1em; background: rgba(255,234,0,0.08); }
+        .log-entry.levelup { border-color: var(--neon-purple); color: #dd99ff; font-size: 1.05em; background: rgba(184,41,221,0.08); }
+        .log-entry.craft { border-color: #ff8800; color: #ffcc88; background: rgba(255,136,0,0.05); }
+
+        .action-panel {
+            padding: 18px;
+            background: rgba(0,0,0,0.3);
+            min-height: 160px;
+        }
+
+        .action-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 0.85em;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            color: var(--neon-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 8px;
+        }
+
+        button {
+            background: linear-gradient(135deg, rgba(0,255,65,0.05), rgba(0,0,0,0.3));
+            border: 1px solid rgba(0,255,65,0.4);
+            color: var(--neon-green);
+            padding: 12px 16px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.9em;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0,255,65,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        button:hover:not(:disabled)::before { left: 100%; }
+
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, rgba(0,255,65,0.15), rgba(0,255,65,0.05));
+            border-color: var(--neon-green);
+            color: #fff;
+            box-shadow: 0 0 25px rgba(0, 255, 65, 0.4);
+            transform: translateY(-2px);
+        }
+
+        button:active:not(:disabled) { transform: translateY(1px); }
+
+        button:disabled {
+            opacity: 0.25;
+            cursor: not-allowed;
+            border-color: #333;
+            color: #555;
+        }
+
+        button.danger {
+            border-color: rgba(255,0,64,0.4);
+            color: #ff99aa;
+            background: linear-gradient(135deg, rgba(255,0,64,0.05), rgba(0,0,0,0.3));
+        }
+
+        button.danger:hover:not(:disabled) {
+            background: linear-gradient(135deg, rgba(255,0,64,0.15), rgba(255,0,64,0.05));
+            border-color: var(--neon-red);
+            color: #fff;
+            box-shadow: 0 0 25px rgba(255, 0, 64, 0.4);
+        }
+
+        button.special {
+            border-color: rgba(255,234,0,0.4);
+            color: #ffee99;
+            background: linear-gradient(135deg, rgba(255,234,0,0.05), rgba(0,0,0,0.3));
+        }
+
+        button.special:hover:not(:disabled) {
+            background: linear-gradient(135deg, rgba(255,234,0,0.15), rgba(255,234,0,0.05));
+            border-color: var(--neon-yellow);
+            color: #fff;
+            box-shadow: 0 0 25px rgba(255, 234, 0, 0.4);
+        }
+
+        button.blue {
+            border-color: rgba(0,212,255,0.4);
+            color: #99eeff;
+            background: linear-gradient(135deg, rgba(0,212,255,0.05), rgba(0,0,0,0.3));
+        }
+
+        button.blue:hover:not(:disabled) {
+            background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(0,212,255,0.05));
+            border-color: var(--neon-blue);
+            color: #fff;
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.4);
+        }
+
+        .combat-info-bar {
+            background: rgba(255,0,64,0.08);
+            border: 1px solid rgba(255,0,64,0.3);
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Orbitron', monospace;
+            font-size: 0.9em;
+        }
+
+        .combat-info-bar .mob-name { color: var(--neon-red); }
+        .combat-info-bar .mob-hp { color: #ff9999; }
+
+        .boss-health-container {
+            width: 100%;
+            height: 26px;
+            background: #1a0000;
+            border: 2px solid var(--neon-red);
+            margin: 8px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .boss-health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0040, #ff3366, #ff0040);
+            background-size: 200% 100%;
+            transition: width 0.5s;
+            box-shadow: 0 0 20px rgba(255,0,64,0.6);
+        }
+
+        .boss-health-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Orbitron', monospace;
+            font-size: 0.8em;
+            text-shadow: 0 0 5px #000;
+            z-index: 2;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active { display: flex; animation: fadeIn 0.3s; }
+
+        .modal-content {
+            background: var(--panel-bg);
+            border: 2px solid var(--neon-green);
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 0 60px rgba(0, 255, 65, 0.2);
+            position: relative;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: 20%; right: 20%;
+            height: 2px;
+            background: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3em;
+            margin-bottom: 12px;
+            text-align: center;
+            letter-spacing: 3px;
+        }
+
+        .riddle-input {
+            width: 100%;
+            background: #000;
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            padding: 12px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.1em;
+            margin-top: 12px;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        .riddle-input:focus {
+            border-color: var(--neon-yellow);
+            box-shadow: 0 0 15px rgba(255,234,0,0.2);
+        }
+
+        .riddle-warning {
+            margin-top: 12px;
+            color: var(--neon-red);
+            font-size: 0.8em;
+            text-align: center;
+        }
+
+        .end-modal .modal-content {
+            border-color: var(--neon-red);
+            text-align: center;
+        }
+
+        .end-modal .modal-content::before {
+            background: var(--neon-red);
+            box-shadow: 0 0 10px var(--neon-red);
+        }
+
+        .end-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2em;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .end-text {
+            margin: 20px 0;
+            font-size: 1.1em;
+            line-height: 1.7;
+        }
+
+        .end-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin: 15px 0;
+            padding: 12px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid #333;
+        }
+
+        .end-stat { padding: 6px; }
+        .end-stat-label {
+            font-size: 0.7em;
+            opacity: 0.6;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .end-stat-value {
+            font-size: 1.2em;
+            font-family: 'Orbitron', monospace;
+            margin-top: 3px;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 3000;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            background: var(--panel-bg);
+            border-left: 3px solid var(--neon-green);
+            padding: 10px 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            animation: toast-in 0.4s ease-out, toast-out 0.4s ease-in 2.6s forwards;
+            max-width: 260px;
+            font-size: 0.85em;
+        }
+
+        .toast.loot { border-color: var(--neon-yellow); }
+        .toast.damage { border-color: var(--neon-red); }
+        .toast.heal { border-color: var(--neon-green); }
+        .toast.level { border-color: var(--neon-purple); }
+
+        .mob-popup {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--panel-bg);
+            border: 2px solid var(--neon-red);
+            padding: 25px;
+            z-index: 1500;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(255,0,64,0.3);
+            display: none;
+            min-width: 300px;
+        }
+
+        .mob-popup.active { display: block; animation: slideUp 0.3s ease-out; }
+        .mob-popup .mob-icon { font-size: 2.5em; margin-bottom: 8px; }
+        .mob-popup .mob-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2em;
+            color: var(--neon-red);
+            margin-bottom: 8px;
+        }
+        .mob-popup .mob-desc { color: #aaa; margin-bottom: 15px; font-size: 0.85em; }
+        .mob-popup .mob-stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 15px;
+            font-size: 0.8em;
+        }
+        .mob-popup .mob-stat { color: #ff9999; }
+
+        @media (max-width: 900px) {
             .game-container { flex-direction: column; }
             .sidebar { width: 100%; }
+            h1 { font-size: 1.6em; }
         }
+
+        .hidden { display: none !important; }
     </style>
+<base target="_blank">
 </head>
 <body>
+    <div class="toast-container" id="toastContainer"></div>
+
     <header>
         <h1>⚡ PRIMECORE ⚡</h1>
-        <div style="font-size: 0.8em; opacity: 0.8;">Survival Text Adventure</div>
+        <div class="subtitle">SURVIVAL TEXT ADVENTURE v2.0</div>
     </header>
-   
+
     <div class="game-container">
         <aside class="sidebar">
-            <div class="status-panel">
+            <div class="panel">
+                <div class="panel-title">📊 STATUS</div>
                 <div class="biome-indicator" id="currentBiome">LONG ISLAND</div>
-                <div>
-                    <strong>❤ LEBEN:</strong>
-                    <div class="health-bar">
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Level</div>
+                        <div class="stat-value" id="playerLevel">1</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">XP</div>
+                        <div class="stat-value" id="playerXP">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Angriff</div>
+                        <div class="stat-value" id="playerAttack" style="color:var(--neon-red)">10</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Verteidigung</div>
+                        <div class="stat-value" id="playerDefense" style="color:var(--neon-blue)">0</div>
+                    </div>
+                </div>
+
+                <div class="health-section">
+                    <div class="health-label">
+                        <span>❤ LEBEN</span>
+                        <span id="healthText">100/100</span>
+                    </div>
+                    <div class="health-bar-container">
                         <div class="health-fill" id="healthBar" style="width: 100%"></div>
                     </div>
-                    <div id="healthText" style="text-align: center; margin-top: 5px;">100/100</div>
+                </div>
+
+                <div class="xp-section">
+                    <div class="health-label">
+                        <span>⭐ XP</span>
+                        <span id="xpText">0/100</span>
+                    </div>
+                    <div class="xp-bar-container">
+                        <div class="xp-fill" id="xpBar" style="width: 0%"></div>
+                    </div>
                 </div>
             </div>
-           
-            <div class="status-panel">
-                <strong>🎒 INVENTAR (<span id="itemCount">0</span>)</strong>
+
+            <div class="panel">
+                <div class="panel-title">🎒 INVENTAR (<span id="itemCount">0</span>)</div>
                 <div class="inventory-grid" id="inventory"></div>
             </div>
-           
-            <div class="status-panel">
-                <strong>🏰 DUNGEONS:</strong>
+
+            <div class="panel">
+                <div class="panel-title">🏰 DUNGEONS</div>
                 <div class="dungeon-grid" id="dungeonGrid">
-                    <div class="dungeon-node" data-biome="0" data-dungeon="0">D1</div>
-                    <div class="dungeon-node" data-biome="0" data-dungeon="1">D2</div>
-                    <div class="dungeon-node" data-biome="0" data-dungeon="2">D3</div>
-                    <div class="dungeon-node" data-biome="1" data-dungeon="0">D1</div>
-                    <div class="dungeon-node" data-biome="1" data-dungeon="1">D2</div>
-                    <div class="dungeon-node" data-biome="1" data-dungeon="2">D3</div>
-                    <div class="dungeon-node" data-biome="2" data-dungeon="0">D1</div>
-                    <div class="dungeon-node" data-biome="2" data-dungeon="1">D2</div>
-                    <div class="dungeon-node" data-biome="2" data-dungeon="2">D3</div>
+                    <div class="dungeon-node" data-biome="0" data-dungeon="0"><span class="node-label">D1</span></div>
+                    <div class="dungeon-node" data-biome="0" data-dungeon="1"><span class="node-label">D2</span></div>
+                    <div class="dungeon-node" data-biome="0" data-dungeon="2"><span class="node-label">D3</span></div>
+                    <div class="dungeon-node" data-biome="1" data-dungeon="0"><span class="node-label">D1</span></div>
+                    <div class="dungeon-node" data-biome="1" data-dungeon="1"><span class="node-label">D2</span></div>
+                    <div class="dungeon-node" data-biome="1" data-dungeon="2"><span class="node-label">D3</span></div>
+                    <div class="dungeon-node" data-biome="2" data-dungeon="0"><span class="node-label">D1</span></div>
+                    <div class="dungeon-node" data-biome="2" data-dungeon="1"><span class="node-label">D2</span></div>
+                    <div class="dungeon-node" data-biome="2" data-dungeon="2"><span class="node-label">D3</span></div>
                 </div>
-                <div style="margin-top: 10px; font-size: 0.8em; opacity: 0.7;">
-                    Reihe 1: Long Island<br>
-                    Reihe 2: Cryo Zone<br>
-                    Reihe 3: Obsidian
+                <div style="margin-top: 10px; font-size: 0.7em; opacity: 0.6; line-height: 1.5;">
+                    <span style="color:var(--neon-green)">■</span> Long Island &nbsp;
+                    <span style="color:var(--neon-blue)">■</span> Cryo Zone &nbsp;
+                    <span style="color:var(--neon-red)">■</span> Obsidian
                 </div>
             </div>
         </aside>
-       
+
         <main class="main-panel">
             <div class="game-log" id="gameLog">
-                <div class="log-entry">Willkommen in PRIMECORE. Ein düsteres Land voller mutierter Kreaturen erwartet dich!</div>
-                <div class="log-entry">Dein Ziel: Besiege den Endboss TYRANOCELUS ARCEPHALUS.</div>
+                <div class="log-entry">Willkommen in <strong>PRIMECORE v2.0</strong>. Ein düsteres Land voller mutierter Kreaturen erwartet dich!</div>
+                <div class="log-entry">Dein Ziel: Besiege den Endboss <strong style="color:var(--neon-red)">TYRANOCCELUS ARCEPHALUS</strong>.</div>
+                <div class="log-entry event">💡 <strong>Tip:</strong> Klicke auf Items im Inventar, um sie anzulegen oder zu nutzen!</div>
             </div>
-           
+
             <div class="action-panel" id="actionPanel">
                 <div id="biomeSelection">
-                    <strong>WÄHLE DEINEN STARTPUNKT:</strong>
+                    <div class="action-title">🌍 WÄHLE DEINEN STARTPUNKT</div>
                     <div class="button-grid">
-                        <button onclick="selectBiome(0)">Long Island (Einfach)</button>
-                        <button onclick="selectBiome(1)">Cryo Zone (Mittel)</button>
-                        <button onclick="selectBiome(2)" class="danger">Obsidian Wilderness (Schwer)</button>
+                        <button onclick="selectBiome(0)">🌴 Long Island<br><small style="opacity:0.6">Einfach | Ressourcenreich</small></button>
+                        <button onclick="selectBiome(1)" class="blue">❄️ Cryo Zone<br><small style="opacity:0.6">Mittel | Frostige Gefahr</small></button>
+                        <button onclick="selectBiome(2)" class="danger">🔥 Obsidian Wilderness<br><small style="opacity:0.6">Schwer | Tödlich</small></button>
                     </div>
                 </div>
-               
+
                 <div id="mainMenu" class="hidden">
-                    <strong>AKTION:</strong>
+                    <div class="action-title">⚡ AKTION</div>
                     <div class="button-grid">
                         <button onclick="explore()">🔍 Erkunden</button>
                         <button onclick="showDungeons()">🏰 Dungeon betreten</button>
                         <button onclick="showCrafting()">⚒ Craften</button>
                         <button onclick="showBiomeChange()">🌍 Biom wechseln</button>
+                        <button onclick="rest()" class="blue">💤 Ausruhen</button>
                         <button onclick="challengeEndBoss()" class="danger" id="bossBtn" disabled>👹 Endboss herausfordern</button>
                     </div>
                 </div>
-               
+
                 <div id="combatMenu" class="hidden">
-                    <strong>KAMPFMODUS:</strong>
-                    <div id="combatInfo" style="margin-bottom: 10px; color: #ff6666;"></div>
+                    <div class="combat-info-bar">
+                        <span class="mob-name" id="combatMobName">MOB</span>
+                        <span class="mob-hp" id="combatMobHP">HP: 30/30</span>
+                    </div>
+                    <div class="action-title">⚔ KAMPFMODUS</div>
                     <div class="button-grid">
                         <button onclick="combatAction('attack')" class="danger">⚔ Angreifen</button>
+                        <button onclick="combatAction('defend')" class="blue">🛡 Blocken</button>
+                        <button onclick="combatAction('item')">🎒 Item nutzen</button>
                         <button onclick="combatAction('flee')">🏃 Fliehen</button>
                     </div>
                 </div>
-               
+
+                <div id="combatItemMenu" class="hidden">
+                    <div class="action-title">🎒 ITEM WÄHLEN</div>
+                    <div class="button-grid" id="combatItemButtons"></div>
+                    <button onclick="backToCombat()" style="margin-top:10px;width:100%;">↩ Zurück</button>
+                </div>
+
                 <div id="bossCombatMenu" class="hidden">
-                    <strong>FINALER KAMPF:</strong>
-                    <div id="bossCombatInfo" style="margin-bottom: 10px; color: #ff0000; font-size: 1.2em;"></div>
+                    <div class="combat-info-bar" style="border-color:var(--neon-purple);background:rgba(184,41,221,0.08);">
+                        <span class="mob-name" style="color:var(--neon-purple)" id="bossCombatName">TYRANOCCELUS ARCEPHALUS</span>
+                        <span class="mob-hp" id="bossCombatHP">HP: 300/300</span>
+                    </div>
+                    <div class="boss-health-container">
+                        <div class="boss-health-fill" id="bossHealthBar" style="width: 100%"></div>
+                        <div class="boss-health-text" id="bossHealthText">300 / 300</div>
+                    </div>
+                    <div class="action-title">🔥 FINALER KAMPF</div>
                     <div class="button-grid">
                         <button onclick="bossCombatAction('attack')" class="danger">⚔ Angreifen</button>
-                        <button onclick="bossCombatAction('special')" style="border-color: #ffd700; color: #ffd700;">⚡ Spezialattacke</button>
+                        <button onclick="bossCombatAction('special')" class="special">⚡ Spezialattacke</button>
+                        <button onclick="bossCombatAction('item')">🎒 Item nutzen</button>
+                        <button onclick="bossCombatAction('defend')" class="blue">🛡 Blocken</button>
                     </div>
                 </div>
-               
+
                 <div id="dungeonSelect" class="hidden">
-                    <strong>DUNGEON AUSWÄHLEN:</strong>
+                    <div class="action-title">🏰 DUNGEON AUSWÄHLEN</div>
                     <div id="dungeonButtons" class="button-grid"></div>
-                    <button onclick="showMain()" style="margin-top: 10px; width: 100%;">Zurück</button>
+                    <button onclick="showMain()" style="margin-top:10px;width:100%;">↩ Zurück</button>
                 </div>
-               
+
                 <div id="craftingMenu" class="hidden">
-                    <strong>CRAFTING:</strong>
+                    <div class="action-title">⚒ CRAFTING</div>
                     <div id="craftingButtons" class="button-grid"></div>
-                    <button onclick="showMain()" style="margin-top: 10px; width: 100%;">Zurück</button>
+                    <button onclick="showMain()" style="margin-top:10px;width:100%;">↩ Zurück</button>
                 </div>
-               
+
                 <div id="biomeChange" class="hidden">
-                    <strong>REISEN ZU:</strong>
+                    <div class="action-title">🌍 REISEN ZU</div>
                     <div class="button-grid">
-                        <button onclick="changeBiome(0)">Long Island</button>
-                        <button onclick="changeBiome(1)">Cryo Zone</button>
-                        <button onclick="changeBiome(2)" class="danger">Obsidian Wilderness</button>
+                        <button onclick="changeBiome(0)">🌴 Long Island</button>
+                        <button onclick="changeBiome(1)" class="blue">❄️ Cryo Zone</button>
+                        <button onclick="changeBiome(2)" class="danger">🔥 Obsidian Wilderness</button>
                     </div>
-                    <button onclick="showMain()" style="margin-top: 10px; width: 100%;">Zurück</button>
+                    <button onclick="showMain()" style="margin-top:10px;width:100%;">↩ Zurück</button>
                 </div>
             </div>
         </main>
     </div>
-   
+
     <div class="modal" id="riddleModal">
         <div class="modal-content">
-            <h2>🏰 DUNGEON RÄTSEL</h2>
-            <p id="riddleText" style="margin-top: 15px; line-height: 1.6;"></p>
+            <div class="modal-title">🏰 DUNGEON RÄTSEL</div>
+            <p id="riddleText" style="margin-top: 12px; line-height: 1.6; font-size: 1em;"></p>
             <input type="text" class="riddle-input" id="riddleInput" placeholder="Deine Antwort..." onkeypress="if(event.key==='Enter') checkRiddle()">
-            <div style="margin-top: 15px; color: #ff6666; font-size: 0.9em;">
+            <div class="riddle-warning">
                 Jeder Fehlversuch kostet 10 Leben!<br>
                 Aktuelles Leben: <span id="riddleHealth">100</span>
             </div>
-            <button onclick="checkRiddle()" style="margin-top: 15px; width: 100%;">Antwort prüfen</button>
+            <button onclick="checkRiddle()" style="margin-top: 12px; width: 100%;">Antwort prüfen</button>
         </div>
     </div>
-   
-    <div class="modal" id="endModal">
-        <div class="modal-content" style="text-align: center;">
-            <h1 id="endTitle"></h1>
-            <p id="endText" style="margin: 20px 0; font-size: 1.2em;"></p>
-            <button onclick="location.reload()" style="width: 100%;">Neues Spiel</button>
+
+    <div class="modal end-modal" id="endModal">
+        <div class="modal-content">
+            <div class="end-title" id="endTitle"></div>
+            <p class="end-text" id="endText"></p>
+            <div class="end-stats" id="endStats"></div>
+            <button onclick="location.reload()" style="width: 100%; margin-top: 10px;">Neues Spiel</button>
         </div>
     </div>
- 
- 
- <script>
-        const BIOMES = ["Long Island (Einfach)", "Cryo Zone (Mittel)", "Obsidian Wilderness (Schwer)"];
-        const END_BOSS = "Tyranocelus Arcephalus";
-       
-        let state = {
-            currentBiome: null,
-            health: 100,
-            mutantBlood: 0,
-            inventory: [],
-            capturedMobs: [],
-            endBossDefeated: false,
-            dungeonsCompleted: [[false, false, false], [false, false, false], [false, false, false]],
-            currentCombat: null,
-            currentDungeon: null,
-            gameStarted: false,
-            bossFight: null
-        };
-       
-        const riddles = [
-            {q: "Was kann einen Raum füllen, nimmt aber keinen Platz ein?", a: "licht"},
-            {q: "Was kann nur dort leben, wo es Licht gibt, aber verschwindet, wenn das Licht darauf scheint?", a: "schatten"},
-            {q: "Was ist immer vor dir, aber du kannst es nicht sehen?", a: "die zukunft"},
-            {q: "Was hat viele Nadeln, kann aber nicht nähen?", a: "tannenbaum"},
-            {q: "Eine Frau läuft durch die Stadt, als an ihr ein Auto vorbeifährt. Sofort weiß sie, dass dieses Auto gestohlen ist. Woher?", a: "es ist ihr eigenes auto"},
-            {q: "Ein Mann und sein Chef haben dieselben Eltern, sind aber keine Geschwister. Wie geht das?", a: "der mann ist selbstständig"},
-            {q: "Was ist das, was nasser wird, je mehr es trocknet?", a: "handtuch"},
-            {q: "Menschen kaufen mich, um zu essen, aber sie essen mich nie. Was bin ich?", a: "teller"},
-            {q: "Je weiter du vorankommst, desto mehr lässt du mich zurück?", a: "fußabdruck"},
-            {q: "Ich verdiene Milliarden, indem ich Fenster verkaufe. Wer bin ich?", a: "microsoft"},
-            {q: "Welcher Z Promi sagte: Willst du wissen wie viel dein Auto wert ist?", a: "ralf schumacher"},
-            {q: "Der Apfel fällt nicht weit vom?", a: "stamm"},
-            {q: "Der frühe Vogel fängt den?", a: "wurm"},
-            {q: "Wann entdeckte Christoph Kolumbus Amerika?", a: "1492"},
-            {q: "Wie viele Planeten gehören zu unserem Sonnensystem?", a: "8"},
-            {q: "Woraus bestehen Rosinen?", a: "weintrauben"}
-        ];
-       
-        const encounters = [
-            {text: "Ein Händler erscheint und bietet dir etwas Holz an.", effect: () => addItem("Holz")},
-            {text: "Du findest eine verborgene Truhe mit Ressourcen!", effect: () => {addItem("Gold"); addItem("Diamant");}},
-            {text: "Ein Sturm zieht auf - du verlierst 10 Leben.", effect: () => changeHealth(-10)},
-            {text: "Eine Kokosnuss fällt auf deinen Kopf - du verlierst 5 Leben", effect: () => changeHealth(-5)},
-            {text: "Du erschreckst dich von einen vorbei laufenden Reh", effect: () => {}},
-            {text: "Du überfällst einen Dorfbewohner und erhälst ein Holzschwert", effect: () => addItem("Holzschwert")},
-            {text: "Dir läuft ein Abenteurer über den Weg und sagt dir - Licht merk dir einfach nur Licht", effect: () => {}},
-            {text: "Ein Bewohner schenkt dir seinen lieblings Stein", effect: () => addItem("Stein")},
-            {text: "Ein Wolf greift dich an - du verlierst 10 Leben", effect: () => changeHealth(-10)},
-            {text: "Du findest einen Lebensbrunnen - du erhälst 10 Leben", effect: () => changeHealth(10)},
-            {text: "Du isst einen Apfel - du erhälst 5 Leben", effect: () => changeHealth(5)},
-            {text: "In einen verborgenen Waldpfad findest du eine Steinaxt", effect: () => addItem("Steinaxt")},
-            {text: "Eine Fee heilt dich und schenkt dir 40 Lebenspunkte", effect: () => changeHealth(40)},
-            {text: "Nico Hülkenberg holt sein erstes Podium - du erhälst 1 Lebenspunkt", effect: () => changeHealth(1)},
-            {text: "Du fällst in eine Grube und brichst dir dein Bein - du verlierst 50 Lebenspunkte", effect: () => changeHealth(-50)},
-            {text: "Du findest auf dem Weg einen weißen Monster - du erhälst 10 Lebenspunkte", effect: () => changeHealth(10)},
-            {text: "Ein Händler schenkt dir einen Fliegenpilz du bist aber dumm wie sau und isst dieses Ding - Du verlierst 10 Lebenspunkte", effect: () => changeHealth(-10)}
-        ];
-       
-        function log(text, type = '') {
-            const entry = document.createElement('div');
-            entry.className = `log-entry ${type}`;
-            entry.textContent = `> ${text}`;
-            document.getElementById('gameLog').appendChild(entry);
-            document.getElementById('gameLog').scrollTop = document.getElementById('gameLog').scrollHeight;
+
+    <div class="mob-popup" id="mobPopup">
+        <div class="mob-icon" id="mobPopupIcon">👹</div>
+        <div class="mob-name" id="mobPopupName">Mob Name</div>
+        <div class="mob-desc" id="mobPopupDesc">Beschreibung...</div>
+        <div class="mob-stats">
+            <span class="mob-stat">❤ <span id="mobPopupHP">20</span> HP</span>
+            <span class="mob-stat">⚔ <span id="mobPopupDMG">5</span> DMG</span>
+        </div>
+        <div class="button-grid" style="grid-template-columns: 1fr 1fr;">
+            <button onclick="mobPopupAttack()" class="danger">⚔ Angreifen</button>
+            <button onclick="mobPopupFlee()">🏃 Ignorieren</button>
+        </div>
+    </div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  PRIMECORE v2.0 - BUILDING ON ORIGINAL CODE
+// ═══════════════════════════════════════════════════════════════
+
+const BIOMES = ["Long Island", "Cryo Zone", "Obsidian Wilderness"];
+const END_BOSS = "Tyranoccelus Arcephalus";
+const MUTANT_BLOOD_REQUIRED = 3;
+
+let state = {
+    currentBiome: null,
+    health: 100,
+    maxHealth: 100,
+    level: 1,
+    xp: 0,
+    xpToNext: 100,
+    baseAttack: 10,
+    baseDefense: 0,
+    mutantBlood: 0,
+    inventory: [],
+    equippedWeapon: null,
+    equippedArmor: null,
+    dungeonsCompleted: [[false,false,false],[false,false,false],[false,false,false]],
+    currentCombat: null,
+    currentDungeon: null,
+    gameStarted: false,
+    bossFight: null,
+    totalKills: 0,
+    totalCrafts: 0,
+    totalDungeons: 0,
+    highestLevel: 1,
+    isDefending: false,
+    pendingMob: null
+};
+
+// ─── MOB DEFINITIONS (individuelle Stats!) ──────────────────────
+const MOBS = {
+    "Friedliches Dino": {
+        hp: 20, damage: 5, xp: 15, loot: ["Fleisch", "Leder"],
+        aggressive: false, icon: "🦕", desc: "Ein kleines, friedliches Dino-Baby."
+    },
+    "Pikachu": {
+        hp: 18, damage: 6, xp: 12, loot: ["Beeren"],
+        aggressive: false, icon: "⚡", desc: "Ein niedliches elektrisches Wesen."
+    },
+    "Eichhörnchen": {
+        hp: 12, damage: 3, xp: 8, loot: ["Nüsse", "Pelz"],
+        aggressive: false, icon: "🐿️", desc: "Ein flauschiges Eichhörnchen."
+    },
+    "Waldwolf": {
+        hp: 25, damage: 8, xp: 20, loot: ["Wolfsfell", "Fleisch", "Klauen"],
+        aggressive: true, icon: "🐺", desc: "Ein hungriger Wolf aus dem Wald."
+    },
+    "Frostwolf": {
+        hp: 35, damage: 10, xp: 30, loot: ["Eis-Pelz", "Frostkristall"],
+        aggressive: true, icon: "🐺", desc: "Ein Wolf mit eisigen Krallen."
+    },
+    "Frost-Dino": {
+        hp: 45, damage: 12, xp: 35, loot: ["Frost-Schuppen", "Eis-Herz"],
+        aggressive: true, icon: "🦖", desc: "Ein mit Eis überzogener Dino."
+    },
+    "Glatzkopf-Mutant": {
+        hp: 30, damage: 9, xp: 25, loot: ["Mutanten-DNA", "Eis-Splitter"],
+        aggressive: true, icon: "👤", desc: "Ein kahlköpfiger Mutant mit eisigen Augen."
+    },
+    "Eisgolem": {
+        hp: 55, damage: 14, xp: 45, loot: ["Eis-Erz", "Frostkern", "Eis-Splitter"],
+        aggressive: true, icon: "🧊", desc: "Ein riesiger Golem aus purem Eis."
+    },
+    "Mutierter T-Rex": {
+        hp: 70, damage: 18, xp: 60, loot: ["Mutantenblut", "T-Rex-Schuppen", "Dino-Knochen"],
+        aggressive: true, icon: "🦖", desc: "Ein gigantischer, mutierter Tyrannosaurus."
+    },
+    "Gift-Pokemon": {
+        hp: 50, damage: 15, xp: 50, loot: ["Gift-Sack", "Mutantenblut", "Dunkle Beeren"],
+        aggressive: true, icon: "☠️", desc: "Ein mit Gift überzogenes Pokemon."
+    },
+    "Obsidian-Wolf": {
+        hp: 60, damage: 16, xp: 55, loot: ["Obsidian-Pelz", "Mutantenblut", "Scharfe Klauen"],
+        aggressive: true, icon: "🐺", desc: "Ein Wolf mit obsidianischen Krallen."
+    },
+    "Lavagolem": {
+        hp: 85, damage: 20, xp: 75, loot: ["Lava-Kern", "Obsidian", "Mutantenblut", "Schwefel"],
+        aggressive: true, icon: "🔥", desc: "Ein Golem aus geschmolzenem Obsidian."
+    },
+    "Schatten-Drache": {
+        hp: 100, damage: 22, xp: 90, loot: ["Drachen-Schuppe", "Mutantenblut", "Dunkle Seele"],
+        aggressive: true, icon: "🐉", desc: "Ein uralter Drache aus den Tiefen."
+    }
+};
+
+// ─── ITEM DEFINITIONS ───────────────────────────────────────────
+const ITEMS = {
+    "Holz": { type: "material", icon: "🪵", desc: "Basis-Baumaterial" },
+    "Stein": { type: "material", icon: "🪨", desc: "Harter Baustein" },
+    "Gold": { type: "material", icon: "✨", desc: "Wertvolles Metall" },
+    "Diamant": { type: "material", icon: "💎", desc: "Extrem selten" },
+    "Eis": { type: "material", icon: "🧊", desc: "Gefrorenes Wasser" },
+    "Frostkristall": { type: "material", icon: "❄️", desc: "Magischer Kristall" },
+    "Hartholz": { type: "material", icon: "🌲", desc: "Robustes Holz" },
+    "Obsidian": { type: "material", icon: "⬛", desc: "Vulkanglas" },
+    "Schwefel": { type: "material", icon: "💨", desc: "Stinkender Schwefel" },
+    "Giftpilze": { type: "material", icon: "🍄", desc: "Toxische Pilze" },
+    "Leder": { type: "material", icon: "🟫", desc: "Tierhaut" },
+    "Fleisch": { type: "consumable", icon: "🍖", desc: "Rohes Fleisch", effect: { heal: 15 } },
+    "Beeren": { type: "consumable", icon: "🫐", desc: "Wilde Beeren", effect: { heal: 8 } },
+    "Nüsse": { type: "consumable", icon: "🥜", desc: "Energiespendend", effect: { heal: 5 } },
+    "Wasser": { type: "consumable", icon: "💧", desc: "Frisches Wasser", effect: { heal: 10 } },
+    "Dunkle Beeren": { type: "consumable", icon: "🫐", desc: "Mysteriöse Beeren", effect: { heal: 20 } },
+    "Heiltrank": { type: "consumable", icon: "🧪", desc: "Starker Heiltrank", effect: { heal: 40 } },
+    "Gift-Sack": { type: "material", icon: "☠️", desc: "Giftbeutel" },
+    "Mutantenblut": { type: "material", icon: "🩸", desc: "Blut eines Mutanten" },
+    "Wolfsfell": { type: "material", icon: "🐺", desc: "Warmes Fell" },
+    "Pelz": { type: "material", icon: "🧶", desc: "Weiches Fell" },
+    "Klauen": { type: "material", icon: "🦴", desc: "Scharfe Klauen" },
+    "Eis-Pelz": { type: "material", icon: "🧊", desc: "Eisiges Fell" },
+    "Eis-Herz": { type: "material", icon: "💙", desc: "Gefrorenes Herz" },
+    "Frost-Schuppen": { type: "material", icon: "🐉", desc: "Eisige Schuppen" },
+    "Mutanten-DNA": { type: "material", icon: "🧬", desc: "Genetisches Material" },
+    "Eis-Splitter": { type: "material", icon: "💠", desc: "Scharfe Eissplitter" },
+    "Eis-Erz": { type: "material", icon: "🧊", desc: "Eisiges Erz" },
+    "Frostkern": { type: "material", icon: "❄️", desc: "Kern eines Frostwesens" },
+    "T-Rex-Schuppen": { type: "material", icon: "🦖", desc: "Dicke Schuppen" },
+    "Dino-Knochen": { type: "material", icon: "🦴", desc: "Robuste Knochen" },
+    "Obsidian-Pelz": { type: "material", icon: "⬛", desc: "Dunkles Fell" },
+    "Scharfe Klauen": { type: "material", icon: "🦴", desc: "Extrem scharf" },
+    "Lava-Kern": { type: "material", icon: "🔥", desc: "Glühender Kern" },
+    "Drachen-Schuppe": { type: "material", icon: "🐉", desc: "Unverwüstlich" },
+    "Dunkle Seele": { type: "material", icon: "👻", desc: "Eine gefangene Seele" },
+    "Elektro-Staub": { type: "material", icon: "⚡", desc: "Knisternder Staub" },
+    // Waffen
+    "Holzschwert": { type: "weapon", icon: "🗡️", desc: "Einfaches Holzschwert", damage: 8, tier: 1 },
+    "Steinaxt": { type: "weapon", icon: "🪓", desc: "Robuste Steinaxt", damage: 12, tier: 2 },
+    "Goldschwert": { type: "weapon", icon: "⚔️", desc: "Edles Goldschwert", damage: 18, tier: 3 },
+    "Diamantschwert": { type: "weapon", icon: "💎", desc: "Legendäres Diamantschwert", damage: 28, tier: 4 },
+    "Frostklinge": { type: "weapon", icon: "❄️", desc: "Eisige Klinge", damage: 22, tier: 3 },
+    "Obsidian-Kriegsaxt": { type: "weapon", icon: "🔥", desc: "Tödliche Kriegsaxt", damage: 32, tier: 4 },
+    // Rüstungen
+    "Leder-Rüstung": { type: "armor", icon: "🛡️", desc: "Einfache Lederrüstung", defense: 5, tier: 1 },
+    "Eisen-Rüstung": { type: "armor", icon: "🛡️", desc: "Robuste Eisenrüstung", defense: 10, tier: 2 },
+    "Frost-Rüstung": { type: "armor", icon: "🧊", desc: "Eisige Schutzrüstung", defense: 15, tier: 3 },
+    "Drachen-Rüstung": { type: "armor", icon: "🐉", desc: "Legendäre Drachenrüstung", defense: 22, tier: 4 }
+};
+
+// ─── CRAFTING RECIPES (erweitert!) ────────────────────────────
+const RECIPES = [
+    { name: "Holzschwert", req: {"Holz": 3}, id: 1 },
+    { name: "Steinaxt", req: {"Stein": 2, "Holz": 2}, id: 2 },
+    { name: "Leder-Rüstung", req: {"Leder": 3, "Holz": 1}, id: 3 },
+    { name: "Goldschwert", req: {"Gold": 3, "Holz": 1}, id: 4 },
+    { name: "Eisen-Rüstung", req: {"Stein": 4, "Leder": 2, "Gold": 1}, id: 5 },
+    { name: "Heiltrank", req: {"Beeren": 2, "Wasser": 1, "Giftpilze": 1}, id: 6 },
+    { name: "Diamantschwert", req: {"Diamant": 2, "Gold": 2, "Holz": 1}, id: 7 },
+    { name: "Frostklinge", req: {"Frostkristall": 3, "Eis": 2, "Stein": 1}, id: 8 },
+    { name: "Frost-Rüstung", req: {"Frost-Schuppen": 3, "Eis-Pelz": 2, "Leder": 1}, id: 9 },
+    { name: "Obsidian-Kriegsaxt", req: {"Obsidian": 4, "Lava-Kern": 1, "Hartholz": 2}, id: 10 },
+    { name: "Drachen-Rüstung", req: {"Drachen-Schuppe": 3, "Obsidian-Pelz": 2, "Dunkle Seele": 1}, id: 11 }
+];
+
+// ─── RIDDLES ────────────────────────────────────────────────────
+const riddles = [
+    {q: "Was kann einen Raum füllen, nimmt aber keinen Platz ein?", a: "licht"},
+    {q: "Was kann nur dort leben, wo es Licht gibt, aber verschwindet, wenn das Licht darauf scheint?", a: "schatten"},
+    {q: "Was ist immer vor dir, aber du kannst es nicht sehen?", a: "die zukunft"},
+    {q: "Was hat viele Nadeln, kann aber nicht nähen?", a: "tannenbaum"},
+    {q: "Eine Frau läuft durch die Stadt, als an ihr ein Auto vorbeifährt. Sofort weiß sie, dass dieses Auto gestohlen ist. Woher?", a: "es ist ihr eigenes auto"},
+    {q: "Ein Mann und sein Chef haben dieselben Eltern, sind aber keine Geschwister. Wie geht das?", a: "der mann ist selbstständig"},
+    {q: "Was ist das, was nasser wird, je mehr es trocknet?", a: "handtuch"},
+    {q: "Menschen kaufen mich, um zu essen, aber sie essen mich nie. Was bin ich?", a: "teller"},
+    {q: "Je weiter du vorankommst, desto mehr lässt du mich zurück?", a: "fußabdruck"},
+    {q: "Ich verdiene Milliarden, indem ich Fenster verkaufe. Wer bin ich?", a: "microsoft"},
+    {q: "Welcher Z Promi sagte: Willst du wissen wie viel dein Auto wert ist?", a: "ralf schumacher"},
+    {q: "Der Apfel fällt nicht weit vom?", a: "stamm"},
+    {q: "Der frühe Vogel fängt den?", a: "wurm"},
+    {q: "Wann entdeckte Christoph Kolumbus Amerika?", a: "1492"},
+    {q: "Wie viele Planeten gehören zu unserem Sonnensystem?", a: "8"},
+    {q: "Woraus bestehen Rosinen?", a: "weintrauben"}
+];
+
+// ─── ENCOUNTERS ─────────────────────────────────────────────────
+const encounters = [
+    {text: "Ein Händler erscheint und bietet dir etwas Holz an.", effect: () => addItem("Holz")},
+    {text: "Du findest eine verborgene Truhe mit Ressourcen!", effect: () => {addItem("Gold"); addItem("Diamant");}},
+    {text: "Ein Sturm zieht auf - du verlierst 10 Leben.", effect: () => changeHealth(-10)},
+    {text: "Eine Kokosnuss fällt auf deinen Kopf - du verlierst 5 Leben", effect: () => changeHealth(-5)},
+    {text: "Du erschreckst dich von einem vorbei laufenden Reh", effect: () => {}},
+    {text: "Du überfällst einen Dorfbewohner und erhältst ein Holzschwert", effect: () => addItem("Holzschwert")},
+    {text: "Dir läuft ein Abenteurer über den Weg und sagt dir - Licht merk dir einfach nur Licht", effect: () => {}},
+    {text: "Ein Bewohner schenkt dir seinen Lieblings-Stein", effect: () => addItem("Stein")},
+    {text: "Ein Wolf greift dich an - du verlierst 10 Leben", effect: () => changeHealth(-10)},
+    {text: "Du findest einen Lebensbrunnen - du erhältst 10 Leben", effect: () => changeHealth(10)},
+    {text: "Du isst einen Apfel - du erhältst 5 Leben", effect: () => changeHealth(5)},
+    {text: "In einem verborgenen Waldpfad findest du eine Steinaxt", effect: () => addItem("Steinaxt")},
+    {text: "Eine Fee heilt dich und schenkt dir 40 Lebenspunkte", effect: () => changeHealth(40)},
+    {text: "Nico Hülkenberg holt sein erstes Podium - du erhältst 1 Lebenspunkt", effect: () => changeHealth(1)},
+    {text: "Du fällst in eine Grube und brichst dir dein Bein - du verlierst 50 Lebenspunkte", effect: () => changeHealth(-50)},
+    {text: "Du findest auf dem Weg einen weißen Monster - du erhältst 10 Lebenspunkte", effect: () => changeHealth(10)},
+    {text: "Ein Händler schenkt dir einen Fliegenpilz, du bist aber dumm wie Sau und isst dieses Ding - Du verlierst 10 Lebenspunkte", effect: () => changeHealth(-10)},
+    {text: "Du findest einen alten Schrein mit einem Heiltrank!", effect: () => addItem("Heiltrank")},
+    {text: "Ein mysteriöser Nebel umhüllt dich... Du fühlst dich stärker!", effect: () => { state.baseAttack += 2; updateStats(); log("Dein Angriff steigt um 2!", "levelup"); }},
+    {text: "Du entdeckst eine versteckte Schmiede und findest Eisen!", effect: () => addItem("Stein")}
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  CORE FUNCTIONS
+// ═══════════════════════════════════════════════════════════════
+
+function log(text, type = '') {
+    const entry = document.createElement('div');
+    entry.className = `log-entry ${type}`;
+    entry.innerHTML = text;
+    document.getElementById('gameLog').appendChild(entry);
+    document.getElementById('gameLog').scrollTop = document.getElementById('gameLog').scrollHeight;
+}
+
+function showToast(text, type = '') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = text;
+    container.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+
+function changeHealth(amount) {
+    const oldHealth = state.health;
+    state.health = Math.max(0, Math.min(state.maxHealth, state.health + amount));
+    const pct = (state.health / state.maxHealth) * 100;
+    const bar = document.getElementById('healthBar');
+    bar.style.width = pct + '%';
+    document.getElementById('healthText').textContent = state.health + '/' + state.maxHealth;
+
+    if (state.health <= state.maxHealth * 0.25) {
+        bar.classList.add('low');
+    } else {
+        bar.classList.remove('low');
+    }
+
+    if (amount < 0) {
+        document.body.style.animation = 'shake 0.5s';
+        setTimeout(() => document.body.style.animation = '', 500);
+        showToast(`-${Math.abs(amount)} Leben!`, 'damage');
+    } else if (amount > 0) {
+        showToast(`+${amount} Leben!`, 'heal');
+    }
+
+    if (state.health <= 0 && !state.endBossDefeated) gameOver();
+}
+
+function addXP(amount) {
+    state.xp += amount;
+    if (state.xp >= state.xpToNext) {
+        state.level++;
+        state.xp -= state.xpToNext;
+        state.xpToNext = Math.floor(state.xpToNext * 1.4);
+        state.maxHealth += 10;
+        state.health = state.maxHealth;
+        state.baseAttack += 2;
+        state.baseDefense += 1;
+        if (state.level > state.highestLevel) state.highestLevel = state.level;
+
+        log(`⭐ <strong>LEVEL UP!</strong> Du bist jetzt Level ${state.level}!`, 'levelup');
+        log(`Max. Leben +10, Angriff +2, Verteidigung +1`, 'levelup');
+        showToast(`Level ${state.level} erreicht!`, 'level');
+        updateStats();
+        changeHealth(0);
+    }
+    updateXPBar();
+}
+
+function updateXPBar() {
+    const pct = (state.xp / state.xpToNext) * 100;
+    document.getElementById('xpBar').style.width = pct + '%';
+    document.getElementById('xpText').textContent = state.xp + '/' + state.xpToNext;
+    document.getElementById('playerLevel').textContent = state.level;
+    document.getElementById('playerXP').textContent = state.xp;
+}
+
+function updateStats() {
+    document.getElementById('playerAttack').textContent = calculatePlayerDamage();
+    document.getElementById('playerDefense').textContent = state.baseDefense + (state.equippedArmor ? ITEMS[state.equippedArmor].defense : 0);
+}
+
+function addItem(item) {
+    state.inventory.push(item);
+    updateInventory();
+    const itemData = ITEMS[item] || { icon: "📦", desc: "Unbekannt" };
+    log(`${itemData.icon} <strong>${item}</strong> zum Inventar hinzugefügt!`, 'loot');
+    showToast(`${itemData.icon} ${item} erhalten!`, 'loot');
+}
+
+function removeItem(item, amount = 1) {
+    for (let i = 0; i < amount; i++) {
+        const idx = state.inventory.indexOf(item);
+        if (idx > -1) state.inventory.splice(idx, 1);
+    }
+    updateInventory();
+}
+
+function hasItem(item, amount = 1) {
+    return state.inventory.filter(i => i === item).length >= amount;
+}
+
+function countItem(item) {
+    return state.inventory.filter(i => i === item).length;
+}
+
+function updateInventory() {
+    const grid = document.getElementById('inventory');
+    grid.innerHTML = '';
+
+    // Count items
+    const counts = {};
+    state.inventory.forEach(item => {
+        counts[item] = (counts[item] || 0) + 1;
+    });
+
+    Object.entries(counts).forEach(([item, count]) => {
+        const itemData = ITEMS[item] || { icon: "📦", type: "material", desc: "" };
+        const div = document.createElement('div');
+        div.className = `item-slot ${itemData.type}`;
+        if (state.equippedWeapon === item) div.classList.add('equipped');
+        if (state.equippedArmor === item) div.classList.add('equipped');
+
+        div.innerHTML = `
+            <span class="item-icon">${itemData.icon}</span>
+            <span class="item-name">${item}</span>
+            ${count > 1 ? `<span class="item-count">${count}</span>` : ''}
+        `;
+        div.title = `${itemData.icon} ${item}\n${itemData.desc}${itemData.type === 'weapon' ? '\nSchaden: +' + itemData.damage : ''}${itemData.type === 'armor' ? '\nVerteidigung: +' + itemData.defense : ''}${itemData.effect ? '\nHeilung: ' + itemData.effect.heal : ''}`;
+        div.onclick = () => useItem(item);
+        grid.appendChild(div);
+    });
+
+    document.getElementById('itemCount').textContent = state.inventory.length;
+    updateStats();
+}
+
+function useItem(item) {
+    const itemData = ITEMS[item];
+    if (!itemData) return;
+
+    if (itemData.type === 'consumable') {
+        if (itemData.effect && itemData.effect.heal) {
+            changeHealth(itemData.effect.heal);
+            removeItem(item, 1);
+            log(`${itemData.icon} Du nutzt <strong>${item}</strong> und heilst ${itemData.effect.heal} Leben!`, 'event');
         }
-       
-        function changeHealth(amount) {
-            state.health = Math.max(0, Math.min(100, state.health + amount));
-            document.getElementById('healthBar').style.width = state.health + '%';
-            document.getElementById('healthText').textContent = state.health + '/100';
-           
-            if (amount < 0) {
-                document.body.style.animation = 'shake 0.5s';
-                setTimeout(() => document.body.style.animation = '', 500);
+    } else if (itemData.type === 'weapon') {
+        if (state.equippedWeapon === item) {
+            state.equippedWeapon = null;
+            log(`🗡️ Du legst <strong>${item}</strong> ab.`, 'event');
+        } else {
+            state.equippedWeapon = item;
+            log(`🗡️ Du rüstest <strong>${item}</strong> aus! (+${itemData.damage} Schaden)`, 'event');
+        }
+        updateInventory();
+    } else if (itemData.type === 'armor') {
+        if (state.equippedArmor === item) {
+            state.equippedArmor = null;
+            log(`🛡️ Du legst <strong>${item}</strong> ab.`, 'event');
+        } else {
+            state.equippedArmor = item;
+            log(`🛡️ Du rüstest <strong>${item}</strong> aus! (+${itemData.defense} Verteidigung)`, 'event');
+        }
+        updateInventory();
+    }
+}
+
+function updateDungeonGrid() {
+    const nodes = document.querySelectorAll('.dungeon-node');
+    nodes.forEach(node => {
+        const b = parseInt(node.dataset.biome);
+        const d = parseInt(node.dataset.dungeon);
+        if (state.dungeonsCompleted[b][d]) {
+            node.classList.add('completed');
+            node.innerHTML = '<span class="node-label">✓</span>';
+        }
+    });
+
+    const anyBiomeComplete = state.dungeonsCompleted.some(biome => biome.every(d => d));
+    document.getElementById('bossBtn').disabled = !anyBiomeComplete;
+}
+
+function getBiomeIndex() {
+    return BIOMES.indexOf(state.currentBiome);
+}
+
+function selectBiome(index) {
+    state.currentBiome = BIOMES[index];
+    state.gameStarted = true;
+
+    const biomeEl = document.getElementById('currentBiome');
+    biomeEl.textContent = state.currentBiome.toUpperCase();
+    biomeEl.className = 'biome-indicator';
+    if (index === 1) biomeEl.classList.add('medium');
+    if (index === 2) biomeEl.classList.add('danger');
+
+    document.getElementById('biomeSelection').classList.add('hidden');
+    document.getElementById('mainMenu').classList.remove('hidden');
+
+    switch(index) {
+        case 0:
+            log("🌴 Du spawnst auf <strong>Long Island</strong> - ein friedliches Biom mit reichen Ressourcen.");
+            addItem("Holz"); addItem("Stein"); addItem("Gold"); addItem("Beeren");
+            break;
+        case 1:
+            log("❄️ Du spawnst in der <strong>Cryo Zone</strong> - kalt und gefährlich, aber mit wertvollen Stoffen.");
+            addItem("Stein"); addItem("Holz"); addItem("Eis"); addItem("Frostkristall");
+            break;
+        case 2:
+            log("🔥 Du spawnst in der <strong>Obsidian Wilderness</strong> - ein todbringendes Biom mit wenigen Ressourcen.");
+            addItem("Stein"); addItem("Obsidian");
+            changeHealth(-20);
+            break;
+    }
+
+    log("Was möchtest du tun?");
+}
+
+function showMain() {
+    document.getElementById('dungeonSelect').classList.add('hidden');
+    document.getElementById('craftingMenu').classList.add('hidden');
+    document.getElementById('biomeChange').classList.add('hidden');
+    document.getElementById('mainMenu').classList.remove('hidden');
+}
+
+// ─── EXPLORE (BALANCED) ─────────────────────────────────────────
+function explore() {
+    const biomes = {
+        0: {
+            resources: ["Holz", "Stein", "Beeren", "Wasser", "Nüsse"],
+            mobs: ["Friedliches Dino", "Pikachu", "Eichhörnchen", "Waldwolf"],
+            mobChance: 0.25
+        },
+        1: {
+            resources: ["Eis", "Frostkristalle", "Hartholz", "Wasser", "Eis-Splitter"],
+            mobs: ["Frostwolf", "Frost-Dino", "Glatzkopf-Mutant", "Eisgolem"],
+            mobChance: 0.35
+        },
+        2: {
+            resources: ["Obsidian", "Schwefel", "Giftpilze", "Dunkle Beeren", "Lava-Kern"],
+            mobs: ["Mutierter T-Rex", "Gift-Pokemon", "Obsidian-Wolf", "Lavagolem", "Schatten-Drache"],
+            mobChance: 0.45
+        }
+    };
+
+    const biome = biomes[getBiomeIndex()];
+
+    // 35% Chance etwas zu finden (besser als 20%, nicht zu hoch)
+    if (Math.random() < 0.35) {
+        const foundResource = biome.resources[Math.floor(Math.random() * biome.resources.length)];
+        addItem(foundResource);
+    } else {
+        log("🔍 Du suchst die Gegend ab, findest aber nichts Nützliches...", "event");
+    }
+
+    // Mob-Begegnung
+    if (Math.random() < biome.mobChance) {
+        const mobName = biome.mobs[Math.floor(Math.random() * biome.mobs.length)];
+        const mob = MOBS[mobName];
+
+        if (mob.aggressive) {
+            log(`⚠️ Ein <strong>${mobName}</strong> ${mob.icon} greift dich an!`, 'combat');
+            startCombat(mobName);
+        } else {
+            // Show popup for peaceful mobs
+            state.pendingMob = mobName;
+            document.getElementById('mobPopupIcon').textContent = mob.icon;
+            document.getElementById('mobPopupName').textContent = mobName;
+            document.getElementById('mobPopupDesc').textContent = mob.desc;
+            document.getElementById('mobPopupHP').textContent = mob.hp;
+            document.getElementById('mobPopupDMG').textContent = mob.damage;
+            document.getElementById('mobPopup').classList.add('active');
+        }
+        return;
+    }
+
+    // Zufallsbegegnung 30% Chance
+    if (Math.random() < 0.30) {
+        setTimeout(randomEncounter, 600);
+    }
+}
+
+function mobPopupAttack() {
+    document.getElementById('mobPopup').classList.remove('active');
+    if (state.pendingMob) {
+        startCombat(state.pendingMob);
+        state.pendingMob = null;
+    }
+}
+
+function mobPopupFlee() {
+    document.getElementById('mobPopup').classList.remove('active');
+    log(`Du ignorierst das Wesen und gehst weiter.`);
+    state.pendingMob = null;
+}
+
+function randomEncounter() {
+    const enc = encounters[Math.floor(Math.random() * encounters.length)];
+    log("🎲 Zufällige Begegnung: " + enc.text, 'event');
+    enc.effect();
+}
+
+// ─── COMBAT (FIXED!) ────────────────────────────────────────────
+function calculatePlayerDamage() {
+    let damage = state.baseAttack;
+    if (state.equippedWeapon && ITEMS[state.equippedWeapon]) {
+        damage += ITEMS[state.equippedWeapon].damage;
+    }
+    return damage;
+}
+
+function calculatePlayerDefense() {
+    let defense = state.baseDefense;
+    if (state.equippedArmor && ITEMS[state.equippedArmor]) {
+        defense += ITEMS[state.equippedArmor].defense;
+    }
+    return defense;
+}
+
+function startCombat(mobName) {
+    const mob = MOBS[mobName];
+    if (!mob) return;
+
+    state.currentCombat = {
+        mobName: mobName,
+        mob: mob,
+        mobHealth: mob.hp,
+        mobMaxHealth: mob.hp,
+        aggressive: mob.aggressive
+    };
+    state.isDefending = false;
+
+    document.getElementById('mainMenu').classList.add('hidden');
+    document.getElementById('combatMenu').classList.remove('hidden');
+    updateCombatInfo();
+    log(`⚔️ Kampf beginnt gegen <strong>${mobName}</strong> ${mob.icon}!`, 'combat');
+}
+
+function updateCombatInfo() {
+    const c = state.currentCombat;
+    document.getElementById('combatMobName').textContent = c.mobName + ' ' + c.mob.icon;
+    document.getElementById('combatMobHP').textContent = `HP: ${c.mobHealth}/${c.mobMaxHealth}`;
+}
+
+function combatAction(action) {
+    const combat = state.currentCombat;
+    if (!combat) return;
+
+    const playerDmg = calculatePlayerDamage();
+    const playerDef = calculatePlayerDefense();
+
+    if (action === 'attack') {
+        // Player attack with variance
+        const variance = 0.8 + Math.random() * 0.4; // 80% - 120%
+        const dmg = Math.floor(playerDmg * variance);
+        combat.mobHealth -= dmg;
+        log(`⚔️ Du greifst an und verursachst <strong>${dmg}</strong> Schaden!`, 'combat');
+
+        if (combat.mobHealth > 0) {
+            // Mob counter-attack
+            let mobDmg = combat.mob.damage;
+            // Defense reduces damage
+            mobDmg = Math.max(1, mobDmg - Math.floor(playerDef * 0.5));
+            if (state.isDefending) {
+                mobDmg = Math.floor(mobDmg * 0.4);
+                state.isDefending = false;
             }
-           
-            if (state.health <= 0 && !state.endBossDefeated) gameOver();
+            changeHealth(-mobDmg);
+            log(`💥 ${combat.mobName} schlägt zurück und verursacht <strong>${mobDmg}</strong> Schaden!`, 'combat');
         }
-       
-        function addItem(item) {
-            state.inventory.push(item);
-            updateInventory();
-            log(`${item} zum Inventar hinzugefügt!`, 'loot');
-        }
-       
-        function removeItem(item, amount = 1) {
-            for (let i = 0; i < amount; i++) {
-                const idx = state.inventory.indexOf(item);
-                if (idx > -1) state.inventory.splice(idx, 1);
-            }
-            updateInventory();
-        }
-       
-        function hasItem(item, amount = 1) {
-            return state.inventory.filter(i => i === item).length >= amount;
-        }
-       
-        function updateInventory() {
-            const grid = document.getElementById('inventory');
-            grid.innerHTML = '';
-            state.inventory.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'item';
-                div.textContent = item;
-                div.title = item;
-                grid.appendChild(div);
-            });
-            document.getElementById('itemCount').textContent = state.inventory.length;
-        }
-       
-        function updateDungeonGrid() {
-            const nodes = document.querySelectorAll('.dungeon-node');
-            nodes.forEach(node => {
-                const b = parseInt(node.dataset.biome);
-                const d = parseInt(node.dataset.dungeon);
-                if (state.dungeonsCompleted[b][d]) {
-                    node.classList.add('completed');
-                    node.textContent = '✓';
-                }
-            });
-           
-            const anyBiomeComplete = state.dungeonsCompleted.some(biome => biome.every(d => d));
-            document.getElementById('bossBtn').disabled = !anyBiomeComplete;
-        }
-       
-        function getBiomeIndex() {
-            return BIOMES.indexOf(state.currentBiome);
-        }
-       
-        function selectBiome(index) {
-            state.currentBiome = BIOMES[index];
-            state.gameStarted = true;
-           
-            document.getElementById('currentBiome').textContent = state.currentBiome.split(' ')[0].toUpperCase();
-            document.getElementById('biomeSelection').classList.add('hidden');
-            document.getElementById('mainMenu').classList.remove('hidden');
-           
-            switch(index) {
-                case 0:
-                    log("Du spawnst auf Long Island - ein friedliches Biom mit reichen Ressourcen.");
-                    addItem("Holz"); addItem("Stein"); addItem("Gold");
-                    break;
-                case 1:
-                    log("Du spawnst in der Cryo Zone - kalt und gefährlich, aber mit wertvollen Stöcken.");
-                    addItem("Stein"); addItem("Holz");
-                    break;
-                case 2:
-                    log("Du spawnst in der Obsidian Wilderness - ein todbringendes Biom mit wenigen Ressourcen.");
-                    addItem("Stein");
-                    changeHealth(-20);
-                    break;
-            }
-           
-            log("Was möchtest du tun?");
-        }
-       
-        function showMain() {
-            document.getElementById('dungeonSelect').classList.add('hidden');
-            document.getElementById('craftingMenu').classList.add('hidden');
-            document.getElementById('biomeChange').classList.add('hidden');
-            document.getElementById('mainMenu').classList.remove('hidden');
-        }
-       
-        // HIER IST DIE GEÄNDERTE EXPLORE-FUNKTION:
-        function explore() {
-            const biomes = {
-                0: {
-                    resources: ["Holz", "Stein", "Beeren", "Wasser"],
-                    mobs: ["Friedliches Dino", "Pikachu", "Eichhörnchen"],
-                    aggressive: false
-                },
-                1: {
-                    resources: ["Eis", "Frostkristalle", "Hartholz"],
-                    mobs: ["Wolf", "Frost-Dino", "Glatzis"],
-                    aggressive: Math.random() > 0.5
-                },
-                2: {
-                    resources: ["Obsidian", "Schwefel", "Giftpilze"],
-                    mobs: ["Mutierter T-Rex", "Gift-Pokemon", "Obsidian-Wolf"],
-                    aggressive: true
-                }
-            };
-           
-            const biome = biomes[getBiomeIndex()];
-           
-            // NUR 20% CHANCE ETWAS ZU FINDEN (statt 100%)
-            if (Math.random() < 0.2) {
-                const foundResource = biome.resources[Math.floor(Math.random() * biome.resources.length)];
-                addItem(foundResource);
-            } else {
-                log("Du suchst die Gegend ab, findest aber nichts Nützliches...", "event");
-            }
-           
-            // Mob-Begegnung bleibt bei 20% Chance
-            if (Math.random() < 0.2) {
-                const mob = biome.mobs[Math.floor(Math.random() * biome.mobs.length)];
-                log(`Ein ${mob} erscheint!`, 'combat');
-               
-                if (biome.aggressive) {
-                    log("Es greift dich sofort an!", 'combat');
-                    startCombat(mob, true);
-                } else {
-                    setTimeout(() => {
-                        if (confirm(`Ein ${mob} scheint friedlich zu sein. Willst du angreifen?`)) {
-                            startCombat(mob, false);
-                        } else {
-                            log("Du gehst weiter.");
-                        }
-                    }, 100);
-                }
-                return;
-            }
-           
-            // Zufallsbegegnung 40% Chance
+    } else if (action === 'defend') {
+        state.isDefending = true;
+        log(`🛡️ Du nimmst eine Verteidigungsposition ein! Nächster Angriff wird reduziert.`, 'event');
+        // Mob still attacks but reduced
+        let mobDmg = Math.max(1, Math.floor(combat.mob.damage * 0.4) - Math.floor(playerDef * 0.3));
+        changeHealth(-mobDmg);
+        log(`💥 ${combat.mobName} greift an, aber du blockst einen Teil! <strong>${mobDmg}</strong> Schaden.`, 'combat');
+    } else if (action === 'item') {
+        showCombatItems();
+        return;
+    } else if (action === 'flee') {
+        if (combat.aggressive) {
             if (Math.random() < 0.4) {
-                setTimeout(randomEncounter, 800);
-            }
-        }
-       
-        function randomEncounter() {
-            const enc = encounters[Math.floor(Math.random() * encounters.length)];
-            log("Zufällige Begegnung: " + enc.text, 'event');
-            enc.effect();
-        }
-       
-        function startCombat(mob, aggressive) {
-            state.currentCombat = {
-                mob: mob,
-                mobHealth: aggressive ? 30 : 15,
-                aggressive: aggressive,
-                playerDamage: 10,
-                mobDamage: aggressive ? 15 : 5
-            };
-           
-            document.getElementById('mainMenu').classList.add('hidden');
-            document.getElementById('combatMenu').classList.remove('hidden');
-            updateCombatInfo();
-            log(`Kampf beginnt gegen ${mob}`, 'combat');
-        }
-       
-        function updateCombatInfo() {
-            const c = state.currentCombat;
-            document.getElementById('combatInfo').textContent =
-                `Kampf gegen ${c.mob}! Mob-Leben: ${c.mobHealth} | Dein Leben: ${state.health}`;
-        }
-       
-        function combatAction(action) {
-            const combat = state.currentCombat;
-           
-            if (action === 'attack') {
-                combat.mobHealth -= combat.playerDamage;
-                log(`Du verursachst ${combat.playerDamage} Schaden.`, 'combat');
-               
-                if (combat.mobHealth > 0) {
-                    changeHealth(-combat.mobDamage);
-                    log(`${combat.mob} verursacht ${combat.mobDamage} Schaden.`, 'combat');
-                }
-            } else if (action === 'flee') {
-                if (combat.aggressive) {
-                    log("Du kannst nicht fliehen - der Mob verfolgt dich!", 'combat');
-                    return;
-                } else {
-                    log("Du fliehst erfolgreich.");
-                    endCombat();
-                    return;
-                }
-            }
-           
-            if (combat.mobHealth <= 0) {
-                log(`Du hast ${combat.mob} besiegt!`, 'win');
-                if (combat.mob.startsWith("Mutierter")) {
-                    state.mutantBlood++;
-                    document.getElementById('mutantBlood').textContent = `${state.mutantBlood}/${MUTANT_BLOOD_REQUIRED}`;
-                    log(`Du sammelst Mutantenblut! (${state.mutantBlood}/${MUTANT_BLOOD_REQUIRED})`, 'loot');
-                }
+                log("🏃 Du fliehst erfolgreich!", 'event');
                 endCombat();
-            } else {
-                updateCombatInfo();
-            }
-        }
-       
-        function endCombat() {
-            state.currentCombat = null;
-            document.getElementById('combatMenu').classList.add('hidden');
-            document.getElementById('mainMenu').classList.remove('hidden');
-        }
-       
-        function showDungeons() {
-            const biomeIdx = getBiomeIndex();
-            const container = document.getElementById('dungeonButtons');
-            container.innerHTML = '';
-           
-            for (let i = 0; i < 3; i++) {
-                const btn = document.createElement('button');
-                const completed = state.dungeonsCompleted[biomeIdx][i];
-                btn.textContent = `Dungeon ${i+1} ${completed ? '[✓]' : '[Offen]'}`;
-                btn.disabled = completed;
-                btn.onclick = () => enterDungeon(i);
-                container.appendChild(btn);
-            }
-           
-            document.getElementById('mainMenu').classList.add('hidden');
-            document.getElementById('dungeonSelect').classList.remove('hidden');
-        }
-       
-        function enterDungeon(index) {
-            state.currentDungeon = index;
-            document.getElementById('dungeonSelect').classList.add('hidden');
-           
-            const requiredSkill = 10 + (Math.floor(Math.random() * 6) + 1) * 6;
-            log(`Du betrittst Dungeon ${index+1}... Erfordert ${requiredSkill} Skillpunkte.`);
-           
-            const riddle = riddles[Math.floor(Math.random() * riddles.length)];
-            state.currentRiddle = riddle;
-           
-            setTimeout(() => {
-                document.getElementById('riddleText').textContent = riddle.q;
-                document.getElementById('riddleInput').value = '';
-                document.getElementById('riddleHealth').textContent = state.health;
-                document.getElementById('riddleModal').classList.add('active');
-                document.getElementById('riddleInput').focus();
-            }, 500);
-        }
-       
-        function checkRiddle() {
-            const input = document.getElementById('riddleInput').value.trim().toLowerCase();
-            const correct = state.currentRiddle.a;
-           
-            if (input === correct) {
-                document.getElementById('riddleModal').classList.remove('active');
-                completeDungeon();
-            } else {
-                log("Falsch! Versuche es erneut. -10 Leben", 'combat');
-                changeHealth(-10);
-                document.getElementById('riddleHealth').textContent = state.health;
-               
-                if (state.health <= 0) {
-                    document.getElementById('riddleModal').classList.remove('active');
-                    log("Du bist im Dungeon gestorben! Inventar zurückgesetzt.", 'death');
-                    state.inventory = [];
-                    updateInventory();
-                    state.currentBiome = BIOMES[0];
-                    state.health = 50;
-                    changeHealth(0);
-                    document.getElementById('currentBiome').textContent = "LONG ISLAND";
-                }
-            }
-        }
-       
-        function completeDungeon() {
-            const biomeIdx = getBiomeIndex();
-            state.dungeonsCompleted[biomeIdx][state.currentDungeon] = true;
-           
-            const rewards = ["Holz", "Stein", "Leder"];
-            const reward = rewards[Math.floor(Math.random() * rewards.length)];
-            addItem(reward);
-           
-            log(`Dungeon erfolgreich abgeschlossen! Belohnung: ${reward}`, 'win');
-            updateDungeonGrid();
-            showMain();
-        }
-       
-        function showCrafting() {
-            const recipes = [
-                {name: "Holzschwert", req: "Holz", amount: 2, id: 1},
-                {name: "Steinaxt", req: ["Stein", "Holz"], amount: [1, 1], id: 2},
-                {name: "Rüstung", req: ["Stein", "Leder"], amount: [2, 2], id: 3},
-                {name: "Goldschwert", req: ["Gold", "Holz"], amount: [2, 1], id: 4}
-            ];
-           
-            const container = document.getElementById('craftingButtons');
-            container.innerHTML = '';
-           
-            recipes.forEach(recipe => {
-                const btn = document.createElement('button');
-                let reqText = "";
-                let canCraft = false;
-               
-                if (Array.isArray(recipe.req)) {
-                    reqText = recipe.req.map((r, i) => `${r} x${recipe.amount[i]}`).join(' + ');
-                    canCraft = recipe.req.every((r, i) => hasItem(r, recipe.amount[i]));
-                } else {
-                    reqText = `${recipe.req} x${recipe.amount}`;
-                    canCraft = hasItem(recipe.req, recipe.amount);
-                }
-               
-                btn.textContent = `${recipe.name} (${reqText})`;
-                btn.disabled = !canCraft;
-                btn.onclick = () => craftItem(recipe);
-                container.appendChild(btn);
-            });
-           
-            document.getElementById('mainMenu').classList.add('hidden');
-            document.getElementById('craftingMenu').classList.remove('hidden');
-        }
-       
-        function craftItem(recipe) {
-            if (Array.isArray(recipe.req)) {
-                recipe.req.forEach((r, i) => removeItem(r, recipe.amount[i]));
-            } else {
-                removeItem(recipe.req, recipe.amount);
-            }
-           
-            addItem(recipe.name);
-            log(`${recipe.name} hergestellt!`, 'loot');
-           
-            if (recipe.name === "Rüstung") {
-                changeHealth(20);
-                log("Rüstung gewährt +20 Leben!", 'event');
-            }
-           
-            showCrafting();
-        }
-       
-        function showBiomeChange() {
-            document.getElementById('mainMenu').classList.add('hidden');
-            document.getElementById('biomeChange').classList.remove('hidden');
-        }
-       
-        function changeBiome(index) {
-            state.currentBiome = BIOMES[index];
-            document.getElementById('currentBiome').textContent = state.currentBiome.split(' ')[0].toUpperCase();
-            log(`Du reist nach ${state.currentBiome}.`, 'event');
-            showMain();
-        }
-       
-        function calculatePlayerDamage() {
-            let damage = 10;
-            if (state.inventory.includes("Holzschwert")) damage += 11;
-            if (state.inventory.includes("Steinaxt")) damage += 14;
-            if (state.inventory.includes("Rüstung")) damage += 1;
-            if (state.inventory.includes("Goldschwert")) damage += 8;
-            return damage;
-        }
-       
-        function challengeEndBoss() {
-            const allDungeonsDone = state.dungeonsCompleted.some(biome => biome.every(d => d));
-           
-            if (!allDungeonsDone) {
-                log("Du musst erst alle Dungeons in einem Biom abschließen!", 'combat');
                 return;
-            }
-           
-            log(`Du stellst dich dem Endboss ${END_BOSS}!`, 'combat');
-            log("Ein gewaltiger Mutant aus Dino, Pokémon und Tier!", 'combat');
-           
-            state.bossFight = {
-                health: 160,
-                playerDamage: calculatePlayerDamage()
-            };
-           
-            document.getElementById('mainMenu').classList.add('hidden');
-            document.getElementById('bossCombatMenu').classList.remove('hidden');
-            updateBossInfo();
-        }
-       
-        function updateBossInfo() {
-            const b = state.bossFight;
-            document.getElementById('bossCombatInfo').textContent =
-                `BOSS: ${b.health} HP | DU: ${state.health} HP`;
-        }
-       
-        function bossCombatAction(action) {
-            const boss = state.bossFight;
-           
-            if (action === 'attack') {
-                const dmg = Math.floor(boss.playerDamage * (0.4 + Math.random() * 0.9));
-                boss.health -= dmg;
-                log(`Du verursachst ${dmg} Schaden.`, 'combat');
-            } else if (action === 'special') {
-                if (state.capturedMobs.length > 0) {
-                    const dmg = Math.floor(boss.playerDamage * 2 * (1.4 + Math.random() * 0.9));
-                    boss.health -= dmg;
-                    log(`SPECIAL! ${dmg} Schaden!`, 'win');
-                } else {
-                    log("Keine Mutanten für Spezialattacke verfügbar!", 'combat');
-                    return;
-                }
-            }
-           
-            if (boss.health > 0) {
-                const bossDmg = Math.floor(Math.random() * 7) + 9;
-                changeHealth(-bossDmg);
-                log(`${END_BOSS} verursacht ${bossDmg} Schaden.`, 'combat');
-            }
-           
-            if (boss.health <= 0) {
-                winGame();
-            } else if (state.health <= 0) {
-                gameOver();
             } else {
-                updateBossInfo();
+                log("❌ Flucht gescheitert! Der Mob blockiert den Weg!", 'combat');
+                let mobDmg = Math.max(1, combat.mob.damage - Math.floor(playerDef * 0.5));
+                changeHealth(-mobDmg);
+                log(`💥 ${combat.mobName} verursacht <strong>${mobDmg}</strong> Schaden!`, 'combat');
             }
+        } else {
+            log("🏃 Du fliehst erfolgreich.", 'event');
+            endCombat();
+            return;
         }
-       
-        function gameOver() {
-            document.getElementById('endTitle').textContent = "GAME OVER";
-            document.getElementById('endTitle').style.color = "#ff0000";
-            document.getElementById('endText').textContent = "Du bist gestorben! Primecore ist verloren...";
-            document.getElementById('endModal').classList.add('active');
+    }
+
+    if (combat.mobHealth <= 0) {
+        // Victory!
+        const mob = combat.mob;
+        log(`🏆 Du hast <strong>${combat.mobName}</strong> besiegt! +${mob.xp} XP`, 'win');
+        addXP(mob.xp);
+        state.totalKills++;
+
+        // Loot
+        if (mob.loot && mob.loot.length > 0) {
+            const lootItem = mob.loot[Math.floor(Math.random() * mob.loot.length)];
+            addItem(lootItem);
         }
-       
-        function winGame() {
-            state.endBossDefeated = true;
-            document.getElementById('endTitle').textContent = "SIEG!";
-            document.getElementById('endTitle').style.color = "#ffd700";
-            document.getElementById('endText').textContent = `Du hast ${END_BOSS} besiegt! Primecore ist gerettet!`;
-            document.getElementById('endModal').classList.add('active');
+
+        // Mutantenblut
+        if (combat.mobName.includes("Mutant") || combat.mobName.includes("T-Rex") || 
+            combat.mobName.includes("Gift") || combat.mobName.includes("Obsidian") ||
+            combat.mobName.includes("Lava") || combat.mobName.includes("Drache")) {
+            state.mutantBlood++;
+            log(`🩸 Du sammelst <strong>Mutantenblut</strong>! (${state.mutantBlood}/${MUTANT_BLOOD_REQUIRED})`, 'loot');
+            showToast(`Mutantenblut gesammelt! ${state.mutantBlood}/${MUTANT_BLOOD_REQUIRED}`, 'loot');
         }
-    </script>
+
+        endCombat();
+    } else {
+        updateCombatInfo();
+    }
+}
+
+function showCombatItems() {
+    const container = document.getElementById('combatItemButtons');
+    container.innerHTML = '';
+
+    const consumables = state.inventory.filter(item => ITEMS[item] && ITEMS[item].type === 'consumable');
+    const unique = [...new Set(consumables)];
+
+    if (unique.length === 0) {
+        log("Du hast keine nutzbaren Items!", 'event');
+        return;
+    }
+
+    unique.forEach(item => {
+        const itemData = ITEMS[item];
+        const btn = document.createElement('button');
+        btn.innerHTML = `${itemData.icon} ${item}<br><small>+${itemData.effect.heal} HP</small>`;
+        btn.onclick = () => useCombatItem(item);
+        container.appendChild(btn);
+    });
+
+    document.getElementById('combatMenu').classList.add('hidden');
+    document.getElementById('combatItemMenu').classList.remove('hidden');
+}
+
+function useCombatItem(item) {
+    const itemData = ITEMS[item];
+    if (itemData && itemData.effect && itemData.effect.heal) {
+        changeHealth(itemData.effect.heal);
+        removeItem(item, 1);
+        log(`${itemData.icon} Du nutzt <strong>${item}</strong> im Kampf! +${itemData.effect.heal} HP`, 'event');
+    }
+    backToCombat();
+}
+
+function backToCombat() {
+    document.getElementById('combatItemMenu').classList.add('hidden');
+    document.getElementById('combatMenu').classList.remove('hidden');
+}
+
+function endCombat() {
+    state.currentCombat = null;
+    state.isDefending = false;
+    document.getElementById('combatMenu').classList.add('hidden');
+    document.getElementById('combatItemMenu').classList.add('hidden');
+    document.getElementById('mainMenu').classList.remove('hidden');
+}
+
+// ─── REST ───────────────────────────────────────────────────────
+function rest() {
+    const heal = Math.floor(state.maxHealth * 0.3);
+    changeHealth(heal);
+    log(`💤 Du ruhst dich aus und regenerierst <strong>${heal}</strong> Leben.`, 'event');
+    showToast(`Ausgeruht! +${heal} HP`, 'heal');
+}
+
+// ─── DUNGEONS ───────────────────────────────────────────────────
+function showDungeons() {
+    const biomeIdx = getBiomeIndex();
+    const container = document.getElementById('dungeonButtons');
+    container.innerHTML = '';
+
+    for (let i = 0; i < 3; i++) {
+        const btn = document.createElement('button');
+        const completed = state.dungeonsCompleted[biomeIdx][i];
+        const difficulty = i === 0 ? "Einfach" : i === 1 ? "Mittel" : "Schwer";
+        btn.innerHTML = `Dungeon ${i+1} ${completed ? '[✓]' : '[Offen]'}<br><small>${difficulty}</small>`;
+        btn.disabled = completed;
+        btn.onclick = () => enterDungeon(i);
+        container.appendChild(btn);
+    }
+
+    document.getElementById('mainMenu').classList.add('hidden');
+    document.getElementById('dungeonSelect').classList.remove('hidden');
+}
+
+function enterDungeon(index) {
+    state.currentDungeon = index;
+    document.getElementById('dungeonSelect').classList.add('hidden');
+
+    const difficulty = index === 0 ? 1 : index === 1 ? 2 : 3;
+    log(`🏰 Du betrittst Dungeon ${index+1}... Schwierigkeit: ${["Einfach", "Mittel", "Schwer"][index]}`, 'event');
+
+    const riddle = riddles[Math.floor(Math.random() * riddles.length)];
+    state.currentRiddle = riddle;
+
+    setTimeout(() => {
+        document.getElementById('riddleText').textContent = riddle.q;
+        document.getElementById('riddleInput').value = '';
+        document.getElementById('riddleHealth').textContent = state.health;
+        document.getElementById('riddleModal').classList.add('active');
+        document.getElementById('riddleInput').focus();
+    }, 500);
+}
+
+function checkRiddle() {
+    const input = document.getElementById('riddleInput').value.trim().toLowerCase();
+    const correct = state.currentRiddle.a;
+
+    if (input === correct) {
+        document.getElementById('riddleModal').classList.remove('active');
+        completeDungeon();
+    } else {
+        log("❌ Falsch! Versuche es erneut. -10 Leben", 'combat');
+        changeHealth(-10);
+        document.getElementById('riddleHealth').textContent = state.health;
+
+        if (state.health <= 0) {
+            document.getElementById('riddleModal').classList.remove('active');
+            log("💀 Du bist im Dungeon gestorben! Inventar zurückgesetzt.", 'death');
+            state.inventory = [];
+            state.equippedWeapon = null;
+            state.equippedArmor = null;
+            updateInventory();
+            state.currentBiome = BIOMES[0];
+            state.health = 50;
+            state.maxHealth = 100;
+            changeHealth(0);
+            document.getElementById('currentBiome').textContent = "LONG ISLAND";
+            document.getElementById('currentBiome').className = 'biome-indicator';
+        }
+    }
+}
+
+function completeDungeon() {
+    const biomeIdx = getBiomeIndex();
+    state.dungeonsCompleted[biomeIdx][state.currentDungeon] = true;
+    state.totalDungeons++;
+
+    // Better rewards based on dungeon difficulty
+    const rewards = {
+        0: ["Holz", "Stein", "Leder", "Beeren", "Gold"],
+        1: ["Frostkristall", "Eis", "Hartholz", "Eis-Splitter", "Gold"],
+        2: ["Obsidian", "Diamant", "Schwefel", "Dunkle Beeren", "Mutantenblut"]
+    };
+
+    const rewardPool = rewards[biomeIdx] || rewards[0];
+    const reward = rewardPool[Math.floor(Math.random() * rewardPool.length)];
+    addItem(reward);
+
+    // Bonus reward for harder dungeons
+    if (state.currentDungeon >= 1) {
+        const bonus = rewardPool[Math.floor(Math.random() * rewardPool.length)];
+        setTimeout(() => addItem(bonus), 300);
+    }
+
+    addXP(20 + state.currentDungeon * 15);
+    log(`🏆 Dungeon erfolgreich abgeschlossen!`, 'win');
+    updateDungeonGrid();
+    showMain();
+}
+
+// ─── CRAFTING (ERWEITERT!) ──────────────────────────────────────
+function showCrafting() {
+    const container = document.getElementById('craftingButtons');
+    container.innerHTML = '';
+
+    RECIPES.forEach(recipe => {
+        const btn = document.createElement('button');
+        let reqText = Object.entries(recipe.req).map(([r, a]) => `${r} x${a}`).join(' + ');
+        let canCraft = Object.entries(recipe.req).every(([r, a]) => hasItem(r, a));
+
+        const itemData = ITEMS[recipe.name] || {};
+        const extraInfo = itemData.type === 'weapon' ? ` (+${itemData.damage} DMG)` : 
+                          itemData.type === 'armor' ? ` (+${itemData.defense} DEF)` : 
+                          itemData.effect ? ` (+${itemData.effect.heal} HP)` : '';
+
+        btn.innerHTML = `<strong>${itemData.icon || '🔧'} ${recipe.name}</strong>${extraInfo}<br><small style="opacity:0.7">${reqText}</small>`;
+        btn.disabled = !canCraft;
+        btn.onclick = () => craftItem(recipe);
+        container.appendChild(btn);
+    });
+
+    document.getElementById('mainMenu').classList.add('hidden');
+    document.getElementById('craftingMenu').classList.remove('hidden');
+}
+
+function craftItem(recipe) {
+    Object.entries(recipe.req).forEach(([r, a]) => removeItem(r, a));
+    addItem(recipe.name);
+    state.totalCrafts++;
+    log(`⚒️ <strong>${recipe.name}</strong> hergestellt!`, 'craft');
+    showToast(`${recipe.name} gecraftet!`, 'loot');
+    showCrafting();
+}
+
+// ─── BIOME CHANGE ───────────────────────────────────────────────
+function showBiomeChange() {
+    document.getElementById('mainMenu').classList.add('hidden');
+    document.getElementById('biomeChange').classList.remove('hidden');
+}
+
+function changeBiome(index) {
+    const oldBiome = state.currentBiome;
+    state.currentBiome = BIOMES[index];
+
+    const biomeEl = document.getElementById('currentBiome');
+    biomeEl.textContent = state.currentBiome.toUpperCase();
+    biomeEl.className = 'biome-indicator';
+    if (index === 1) biomeEl.classList.add('medium');
+    if (index === 2) biomeEl.classList.add('danger');
+
+    // Risk when traveling to harder biome
+    if (index > BIOMES.indexOf(oldBiome)) {
+        const dmg = (index - BIOMES.indexOf(oldBiome)) * 10;
+        changeHealth(-dmg);
+        log(`🌍 Du reist nach <strong>${state.currentBiome}</strong>... Die Reise kostet dich <strong>${dmg}</strong> Leben!`, 'event');
+    } else {
+        log(`🌍 Du reist nach <strong>${state.currentBiome}</strong>.`, 'event');
+    }
+
+    showMain();
+}
+
+// ─── END BOSS ───────────────────────────────────────────────────
+function challengeEndBoss() {
+    const allDungeonsDone = state.dungeonsCompleted.some(biome => biome.every(d => d));
+
+    if (!allDungeonsDone) {
+        log("❌ Du musst erst alle Dungeons in einem Biom abschließen!", 'combat');
+        return;
+    }
+
+    log(`👹 Du stellst dich dem Endboss <strong>${END_BOSS}</strong>!`, 'combat');
+    log("Ein gewaltiger Mutant aus Dino, Pokemon und Tier!", 'combat');
+
+    state.bossFight = {
+        health: 300,
+        maxHealth: 300,
+        playerDamage: calculatePlayerDamage()
+    };
+
+    document.getElementById('mainMenu').classList.add('hidden');
+    document.getElementById('bossCombatMenu').classList.remove('hidden');
+    updateBossInfo();
+}
+
+function updateBossInfo() {
+    const b = state.bossFight;
+    const pct = (b.health / b.maxHealth) * 100;
+    document.getElementById('bossHealthBar').style.width = pct + '%';
+    document.getElementById('bossHealthText').textContent = `${b.health} / ${b.maxHealth}`;
+    document.getElementById('bossCombatHP').textContent = `HP: ${b.health}/${b.maxHealth}`;
+}
+
+function bossCombatAction(action) {
+    const boss = state.bossFight;
+    const playerDef = calculatePlayerDefense();
+
+    if (action === 'attack') {
+        const dmg = Math.floor(calculatePlayerDamage() * (0.8 + Math.random() * 0.4));
+        boss.health -= dmg;
+        log(`⚔️ Du verursachst <strong>${dmg}</strong> Schaden!`, 'combat');
+    } else if (action === 'special') {
+        if (state.mutantBlood >= MUTANT_BLOOD_REQUIRED) {
+            const dmg = Math.floor(calculatePlayerDamage() * 2.5 * (1.2 + Math.random() * 0.8));
+            boss.health -= dmg;
+            state.mutantBlood -= MUTANT_BLOOD_REQUIRED;
+            log(`⚡ <strong>SPECIAL!</strong> Du entfesselst die Mutanten-Kraft und verursachst <strong>${dmg}</strong> Schaden!`, 'win');
+            showToast(`Spezialattacke! ${dmg} Schaden!`, 'damage');
+        } else {
+            log(`❌ Nicht genug Mutantenblut! (${state.mutantBlood}/${MUTANT_BLOOD_REQUIRED})`, 'combat');
+            return;
+        }
+    } else if (action === 'item') {
+        showCombatItems();
+        return;
+    } else if (action === 'defend') {
+        state.isDefending = true;
+        log(`🛡️ Du bereitest dich auf den Angriff des Bosses vor!`, 'event');
+    }
+
+    if (boss.health > 0 && action !== 'item') {
+        let bossDmg = Math.floor(Math.random() * 12) + 14; // 14-25 damage
+        if (state.isDefending) {
+            bossDmg = Math.floor(bossDmg * 0.4);
+            state.isDefending = false;
+        }
+        // Defense reduces damage
+        bossDmg = Math.max(3, bossDmg - Math.floor(playerDef * 0.4));
+        changeHealth(-bossDmg);
+        log(`💀 <strong>${END_BOSS}</strong> schlägt zu und verursacht <strong>${bossDmg}</strong> Schaden!`, 'combat');
+    }
+
+    if (boss.health <= 0) {
+        winGame();
+    } else if (state.health <= 0) {
+        gameOver();
+    } else {
+        updateBossInfo();
+    }
+}
+
+// ─── GAME OVER / WIN ────────────────────────────────────────────
+function gameOver() {
+    document.getElementById('endTitle').textContent = "GAME OVER";
+    document.getElementById('endTitle').style.color = "#ff0040";
+    document.getElementById('endText').innerHTML = `Du bist gestorben!<br>Primecore ist verloren...<br><br>Level erreicht: <strong>${state.highestLevel}</strong>`;
+
+    document.getElementById('endStats').innerHTML = `
+        <div class="end-stat"><div class="end-stat-label">Level</div><div class="end-stat-value">${state.level}</div></div>
+        <div class="end-stat"><div class="end-stat-label">Kills</div><div class="end-stat-value">${state.totalKills}</div></div>
+        <div class="end-stat"><div class="end-stat-label">Dungeons</div><div class="end-stat-value">${state.totalDungeons}</div></div>
+        <div class="end-stat"><div class="end-stat-label">Crafts</div><div class="end-stat-value">${state.totalCrafts}</div></div>
+    `;
+
+    document.getElementById('endModal').classList.add('active');
+}
+
+function winGame() {
+    state.endBossDefeated = true;
+    document.getElementById('endTitle').textContent = "🏆 SIEG!";
+    document.getElementById('endTitle').style.color = "#ffd700";
+    document.getElementById('endText').innerHTML = `Du hast <strong>${END_BOSS}</strong> besiegt!<br>Primecore ist gerettet!<br><br>Du bist ein wahrer Champion!`;
+
+    document.getElementById('endStats').innerHTML = `
+        <div class="end-stat"><div class="end-stat-label">Level</div><div class="end-stat-value">${state.level}</div></div>
+        <div class="end-stat"><div class="end-stat-label">Kills</div><div class="end-stat-value">${state.totalKills}</div></div>
+        <div class="end-stat"><div class="end-stat-label">Dungeons</div><div class="end-stat-value">${state.totalDungeons}</div></div>
+        <div class="end-stat"><div class="end-stat-label">Crafts</div><div class="end-stat-value">${state.totalCrafts}</div></div>
+    `;
+
+    document.getElementById('endModal').classList.add('active');
+}
+</script>
 </body>
 </html>
- 
+
+
+
+
+
