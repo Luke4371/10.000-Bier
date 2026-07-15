@@ -934,7 +934,7 @@
                         <button onclick="showDungeons()">🏰 Dungeon betreten</button>
                         <button onclick="showCrafting()">⚒ Craften</button>
                         <button onclick="showBiomeChange()">🌍 Biom wechseln</button>
-                        <button onclick="rest()" class="blue">💤 Ausruhen</button>
+                        <button onclick="rest()" class="blue" id="restBtn">💤 Ausruhen</button>
                         <button onclick="challengeEndBoss()" class="danger" id="bossBtn" disabled>👹 Endboss herausfordern</button>
                     </div>
                 </div>
@@ -1070,7 +1070,8 @@ let state = {
     totalDungeons: 0,
     highestLevel: 1,
     isDefending: false,
-    pendingMob: null
+    pendingMob: null,
+    restCooldown: 0
 };
 
 // ─── MOB DEFINITIONS (individuelle Stats!) ──────────────────────
@@ -1197,24 +1198,24 @@ const RECIPES = [
     { name: "Drachen-Rüstung", req: {"Drachen-Schuppe": 3, "Obsidian-Pelz": 2, "Dunkle Seele": 1}, id: 11 }
 ];
 
-// ─── RIDDLES ────────────────────────────────────────────────────
+// ─── RIDDLES (mit Alternativ-Antworten für Toleranz) ────────────
 const riddles = [
-    {q: "Was kann einen Raum füllen, nimmt aber keinen Platz ein?", a: "licht"},
-    {q: "Was kann nur dort leben, wo es Licht gibt, aber verschwindet, wenn das Licht darauf scheint?", a: "schatten","der Schatten","eier"},
-    {q: "Was ist immer vor dir, aber du kannst es nicht sehen?", a: "die zukunft","Zukunft","zukunft","Nase"} ,
-    {q: "Was hat viele Nadeln, kann aber nicht nähen?", a: "tannenbaum","Weinachtsbaum"},
-    {q: "Eine Frau läuft durch die Stadt, als an ihr ein Auto vorbeifährt. Sofort weiß sie, dass dieses Auto gestohlen ist. Woher?", a: "es ist ihr eigenes auto"},
-    {q: "Ein Mann und sein Chef haben dieselben Eltern, sind aber keine Geschwister. Wie geht das?", a: "der mann ist selbstständig"},
-    {q: "Was ist das, was nasser wird, je mehr es trocknet?", a: "handtuch"},
-    {q: "Menschen kaufen mich, um zu essen, aber sie essen mich nie. Was bin ich?", a: "teller"},
-    {q: "Je weiter du vorankommst, desto mehr lässt du mich zurück?", a: "fußabdruck"},
-    {q: "Ich verdiene Milliarden, indem ich Fenster verkaufe. Wer bin ich?", a: "microsoft"},
-    {q: "Welcher Z Promi sagte: Willst du wissen wie viel dein Auto wert ist?", a: "ralf schumacher"},
-    {q: "Der Apfel fällt nicht weit vom?", a: "stamm"},
-    {q: "Der frühe Vogel fängt den?", a: "wurm"},
-    {q: "Wann entdeckte Christoph Kolumbus Amerika?", a: "1492"},
-    {q: "Wie viele Planeten gehören zu unserem Sonnensystem?", a: "8"},
-    {q: "Woraus bestehen Rosinen?", a: "weintrauben"}
+    {q: "Was kann einen Raum füllen, nimmt aber keinen Platz ein?", a: ["licht", "lichtstrahl", "lichtstrahlen", "sonnenlicht"]},
+    {q: "Was kann nur dort leben, wo es Licht gibt, aber verschwindet, wenn das Licht darauf scheint?", a: ["schatten", "der schatten", "schattenwurf"]},
+    {q: "Was ist immer vor dir, aber du kannst es nicht sehen?", a: ["die zukunft", "zukunft"]},
+    {q: "Was hat viele Nadeln, kann aber nicht nähen?", a: ["tannenbaum", "nadelbaum", "baum", "tanne"]},
+    {q: "Eine Frau läuft durch die Stadt, als an ihr ein Auto vorbeifährt. Sofort weiß sie, dass dieses Auto gestohlen ist. Woher?", a: ["es ist ihr eigenes auto", "ihr eigenes auto", "ihr auto", "es ist ihr auto"]},
+    {q: "Ein Mann und sein Chef haben dieselben Eltern, sind aber keine Geschwister. Wie geht das?", a: ["der mann ist selbstständig", "selbstständig", "selbständig", "er ist sein eigener chef"]},
+    {q: "Was ist das, was nasser wird, je mehr es trocknet?", a: ["handtuch", "ein handtuch", "tuch"]},
+    {q: "Menschen kaufen mich, um zu essen, aber sie essen mich nie. Was bin ich?", a: ["teller", "ein teller", "schüssel"]},
+    {q: "Je weiter du vorankommst, desto mehr lässt du mich zurück?", a: ["fußabdruck", "fußabdrücke", "spuren", "fußspuren"]},
+    {q: "Ich verdiene Milliarden, indem ich Fenster verkaufe. Wer bin ich?", a: ["microsoft", "bill gates", "windows"]},
+    {q: "Welcher Z Promi sagte: Willst du wissen wie viel dein Auto wert ist?", a: ["ralf schumacher", "schumacher", "ralf"]},
+    {q: "Der Apfel fällt nicht weit vom?", a: ["stamm", "baumstamm"]},
+    {q: "Der frühe Vogel fängt den?", a: ["wurm", "regenwurm"]},
+    {q: "Wann entdeckte Christoph Kolumbus Amerika?", a: ["1492"]},
+    {q: "Wie viele Planeten gehören zu unserem Sonnensystem?", a: ["8", "acht"]},
+    {q: "Woraus bestehen Rosinen?", a: ["weintrauben", "trauben", "getrocknete trauben"]}
 ];
 
 // ─── ENCOUNTERS ─────────────────────────────────────────────────
@@ -1438,6 +1439,7 @@ function selectBiome(index) {
 
     document.getElementById('biomeSelection').classList.add('hidden');
     document.getElementById('mainMenu').classList.remove('hidden');
+    updateRestButton();
 
     switch(index) {
         case 0:
@@ -1467,6 +1469,7 @@ function showMain() {
 
 // ─── EXPLORE (BALANCED) ─────────────────────────────────────────
 function explore() {
+    tickTurn();
     const biomes = {
         0: {
             resources: ["Holz", "Stein", "Beeren", "Wasser", "Nüsse"],
@@ -1587,6 +1590,8 @@ function updateCombatInfo() {
 function combatAction(action) {
     const combat = state.currentCombat;
     if (!combat) return;
+
+    if (action !== 'item') tickTurn();
 
     const playerDmg = calculatePlayerDamage();
     const playerDef = calculatePlayerDefense();
@@ -1714,12 +1719,41 @@ function endCombat() {
     document.getElementById('mainMenu').classList.remove('hidden');
 }
 
-// ─── REST ───────────────────────────────────────────────────────
+// ─── REST (mit Cooldown) ─────────────────────────────────────────
 function rest() {
+    if (state.restCooldown > 0) {
+        log(`💤 Du bist noch nicht ausgeruht genug. Warte noch <strong>${state.restCooldown}</strong> Zug(e).`, 'event');
+        return;
+    }
+
     const heal = Math.floor(state.maxHealth * 0.3);
     changeHealth(heal);
     log(`💤 Du ruhst dich aus und regenerierst <strong>${heal}</strong> Leben.`, 'event');
     showToast(`Ausgeruht! +${heal} HP`, 'heal');
+
+    // Cooldown von 3-4 Zügen bis zum nächsten Ausruhen
+    state.restCooldown = 3 + Math.floor(Math.random() * 2);
+    updateRestButton();
+}
+
+// Wird bei jeder Aktion aufgerufen, die als "Zug" zählt (Erkunden, Kampf, Craften, Reisen)
+function tickTurn() {
+    if (state.restCooldown > 0) {
+        state.restCooldown--;
+        updateRestButton();
+    }
+}
+
+function updateRestButton() {
+    const btn = document.getElementById('restBtn');
+    if (!btn) return;
+    if (state.restCooldown > 0) {
+        btn.disabled = true;
+        btn.innerHTML = `💤 Ausruhen<br><small style="opacity:0.7">noch ${state.restCooldown} Zug(e)</small>`;
+    } else {
+        btn.disabled = false;
+        btn.innerHTML = `💤 Ausruhen`;
+    }
 }
 
 // ─── DUNGEONS ───────────────────────────────────────────────────
@@ -1743,6 +1777,7 @@ function showDungeons() {
 }
 
 function enterDungeon(index) {
+    tickTurn();
     state.currentDungeon = index;
     document.getElementById('dungeonSelect').classList.add('hidden');
 
@@ -1761,11 +1796,56 @@ function enterDungeon(index) {
     }, 500);
 }
 
-function checkRiddle() {
-    const input = document.getElementById('riddleInput').value.trim().toLowerCase();
-    const correct = state.currentRiddle.a;
+// ─── Levenshtein-Distanz für Tippfehler-Toleranz ─────────────────
+function levenshteinDistance(str1, str2) {
+    const matrix = [];
+    for (let i = 0; i <= str2.length; i++) matrix[i] = [i];
+    for (let j = 0; j <= str1.length; j++) matrix[0][j] = j;
 
-    if (input === correct) {
+    for (let i = 1; i <= str2.length; i++) {
+        for (let j = 1; j <= str1.length; j++) {
+            if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j - 1] + 1,
+                    matrix[i][j - 1] + 1,
+                    matrix[i - 1][j] + 1
+                );
+            }
+        }
+    }
+    return matrix[str2.length][str1.length];
+}
+
+function checkRiddle() {
+    const rawInput = document.getElementById('riddleInput').value.trim();
+    // Groß-/Kleinschreibung und Satzzeichen ignorieren, Mehrfach-Leerzeichen glätten
+    const input = rawInput.toLowerCase()
+        .replace(/[.,!?;:"'-]/g, '')
+        .replace(/ß/g, 'ss')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    const riddle = state.currentRiddle;
+    const answers = riddle.a; // Array möglicher Antworten
+    let isCorrect = false;
+
+    // 1. Exakter Treffer (nach Normalisierung)
+    if (answers.some(a => input === a.replace(/ß/g, 'ss'))) {
+        isCorrect = true;
+    }
+    // 2. Antwort als Teilstring erlaubt (z.B. "es ist licht" enthält "licht")
+    else if (answers.some(a => input.includes(a.replace(/ß/g, 'ss')))) {
+        isCorrect = true;
+    }
+    // 3. Tippfehler-Toleranz via Levenshtein-Distanz (max. 2 Zeichen Unterschied)
+    else if (answers.some(a => levenshteinDistance(input, a.replace(/ß/g, 'ss')) <= 2)) {
+        isCorrect = true;
+        log(`"${rawInput}" wurde als richtig akzeptiert (Tippfehler korrigiert).`, 'event');
+    }
+
+    if (isCorrect) {
         document.getElementById('riddleModal').classList.remove('active');
         completeDungeon();
     } else {
@@ -1844,6 +1924,7 @@ function showCrafting() {
 }
 
 function craftItem(recipe) {
+    tickTurn();
     Object.entries(recipe.req).forEach(([r, a]) => removeItem(r, a));
     addItem(recipe.name);
     state.totalCrafts++;
@@ -1859,6 +1940,7 @@ function showBiomeChange() {
 }
 
 function changeBiome(index) {
+    tickTurn();
     const oldBiome = state.currentBiome;
     state.currentBiome = BIOMES[index];
 
@@ -1914,6 +1996,8 @@ function updateBossInfo() {
 function bossCombatAction(action) {
     const boss = state.bossFight;
     const playerDef = calculatePlayerDefense();
+
+    if (action !== 'item') tickTurn();
 
     if (action === 'attack') {
         const dmg = Math.floor(calculatePlayerDamage() * (0.8 + Math.random() * 0.4));
@@ -1993,8 +2077,3 @@ function winGame() {
 </script>
 </body>
 </html>
-
-
-
-
-
